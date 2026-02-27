@@ -166,7 +166,7 @@ export default function TransferDashGame() {
       // Check "one away"
       const counts = new Map<string, number>();
       cats.forEach(c => { if (c) counts.set(c, (counts.get(c) || 0) + 1); });
-      if (Math.max(...counts.values()) === 3) {
+      if (Math.max(...Array.from(counts.values())) === 3) {
         setNearMiss(true);
         setTimeout(() => setNearMiss(false), 2000);
       }
