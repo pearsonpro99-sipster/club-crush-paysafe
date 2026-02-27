@@ -116,6 +116,44 @@ export const THEMES: Record<string, ClubTheme> = {
       { id: 4, label: 'Gold',      colour: '#FFD700', emoji: '🟡' },
     ],
   },
+
+  psa_world_tour: {
+    clubId: 'psa_world_tour',
+    clubName: 'PSA World Tour',
+    primaryColour: '#002D74',
+    secondaryColour: '#FF6B35',
+    accentColour: '#FFFFFF',
+    backgroundColour: '#00112a',
+    levelLabel: 'Match',
+    seasonLabel: 'Tour',
+    totalLevels: 32,
+    tiles: [
+      { id: 0, label: 'Ball',      colour: '#FF6B35', emoji: '🎾' },
+      { id: 1, label: 'Navy',      colour: '#002D74', emoji: '🔵' },
+      { id: 2, label: 'Orange',    colour: '#FF6B35', emoji: '🟠' },
+      { id: 3, label: 'Trophy',    colour: '#FFD700', emoji: '🏆' },
+      { id: 4, label: 'White',     colour: '#FFFFFF', emoji: '⚪' },
+    ],
+  },
+
+  volley_verse: {
+    clubId: 'volley_verse',
+    clubName: 'Volley Verse',
+    primaryColour: '#0057A8',
+    secondaryColour: '#FFD700',
+    accentColour: '#FF4444',
+    backgroundColour: '#001a3a',
+    levelLabel: 'Set',
+    seasonLabel: 'Tournament',
+    totalLevels: 25,
+    tiles: [
+      { id: 0, label: 'Ball',      colour: '#0057A8', emoji: '🏐' },
+      { id: 1, label: 'Blue',      colour: '#0057A8', emoji: '🔵' },
+      { id: 2, label: 'Gold',      colour: '#FFD700', emoji: '🟡' },
+      { id: 3, label: 'Red',       colour: '#FF4444', emoji: '🔴' },
+      { id: 4, label: 'Trophy',    colour: '#FFD700', emoji: '🏆' },
+    ],
+  },
 };
 
 export const DEFAULT_THEME = THEMES.arsenal;
