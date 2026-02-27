@@ -1,18 +1,13 @@
 'use client';
 import { useRouter } from 'next/navigation';
 const CLIENTS = [
-  { id: 'arsenal',     name: 'Arsenal FC',        emoji: '🔴', primary: '#EF0107', games: 2 },
-  { id: 'aston_villa', name: 'Aston Villa',        emoji: '🟣', primary: '#670E36', games: 2 },
-  { id: 'liverpool',   name: 'Liverpool FC',       emoji: '🔴', primary: '#C8102E', games: 1 },
-  { id: 'sky_sports',  name: 'Sky Sports',         emoji: '🔵', primary: '#0072CE', games: 1 },
-  { id: 'pdc',         name: 'PDC Darts',          emoji: '🎯', primary: '#00A651', games: 1 },
-  { id: 'nascar',      name: 'NASCAR',             emoji: '🏎️', primary: '#FF6B00', games: 1 },
-  { id: 'daily_mail',  name: 'Daily Mail',         emoji: '📰', primary: '#CC0000', games: 1 },
-  { id: 'leicester',   name: 'Leicester City',     emoji: '🦊', primary: '#003090', games: 1 },
-  { id: 'itv',         name: 'ITV',                emoji: '📺', primary: '#F5A623', games: 1 },
-  { id: 'channel4',    name: 'Channel 4',          emoji: '4️⃣', primary: '#6ABF4B', games: 1 },
-  { id: 'psa',         name: 'PSA World Tour',     emoji: '🎾', primary: '#1E90FF', games: 1 },
-  { id: 'volleyball',  name: 'Volleyball World',   emoji: '🏐', primary: '#FF4500', games: 1 },
+  { id: 'arsenal',       name: 'Arsenal FC',      emoji: '🔴', primary: '#EF0107', games: 2 },
+  { id: 'aston_villa',   name: 'Aston Villa',     emoji: '🟣', primary: '#670E36', games: 2 },
+  { id: 'liverpool',     name: 'Liverpool FC',    emoji: '🔴', primary: '#C8102E', games: 1 },
+  { id: 'sky_sports',    name: 'Sky Sports',      emoji: '🔵', primary: '#0072CE', games: 2 },
+  { id: 'pdc',           name: 'PDC Darts',       emoji: '🎯', primary: '#00A651', games: 1 },
+  { id: 'psa_world_tour',name: 'PSA World Tour',  emoji: '🎾', primary: '#002D74', games: 1 },
+  { id: 'volley_verse',  name: 'Volley Verse',    emoji: '🏐', primary: '#0057A8', games: 1 },
 ];
 export default function HomePage() {
   const router = useRouter();

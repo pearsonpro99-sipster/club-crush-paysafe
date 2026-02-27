@@ -4,20 +4,15 @@ import { useParams, useRouter } from 'next/navigation';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean;
+  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean;
 }> = {
-  arsenal:     { name: 'Arsenal FC',      primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners', hasRunner: true },
-  aston_villa: { name: 'Aston Villa',     primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die', hasVillaFlap: true },
-  liverpool:   { name: 'Liverpool FC',    primary: '#C8102E', secondary: '#F6EB61', bg: '#1a0a0a', emoji: '🔴', tagline: 'You\'ll Never Walk Alone' },
-  sky_sports:  { name: 'Sky Sports',      primary: '#0072CE', secondary: '#FFFFFF', bg: '#000d1a', emoji: '🔵', tagline: 'Where The Action Is' },
-  pdc:         { name: 'PDC Darts',       primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
-  nascar:      { name: 'NASCAR',          primary: '#FF6B00', secondary: '#FFD700', bg: '#1a0a00', emoji: '🏎️', tagline: 'Go Fast, Turn Left' },
-  daily_mail:  { name: 'Daily Mail',      primary: '#CC0000', secondary: '#FFFFFF', bg: '#1a0505', emoji: '📰', tagline: 'Daily Mail Sport' },
-  leicester:   { name: 'Leicester City',  primary: '#003090', secondary: '#FDBE11', bg: '#000a1a', emoji: '🦊', tagline: 'The Foxes' },
-  itv:         { name: 'ITV',             primary: '#F5A623', secondary: '#FFFFFF', bg: '#1a1000', emoji: '📺', tagline: 'ITV Sport' },
-  channel4:    { name: 'Channel 4',       primary: '#6ABF4B', secondary: '#FFFFFF', bg: '#0a1a05', emoji: '4️⃣', tagline: 'Channel 4 Sport' },
-  psa:         { name: 'PSA World Tour',  primary: '#1E90FF', secondary: '#FFD700', bg: '#000d1a', emoji: '🎾', tagline: 'World Squash' },
-  volleyball:  { name: 'Volleyball World',primary: '#FF4500', secondary: '#FFD700', bg: '#1a0800', emoji: '🏐', tagline: 'Volleyball World' },
+  arsenal:        { name: 'Arsenal FC',     primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners',                  hasRunner: true },
+  aston_villa:    { name: 'Aston Villa',    primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',              hasVillaFlap: true },
+  liverpool:      { name: 'Liverpool FC',   primary: '#C8102E', secondary: '#F6EB61', bg: '#1a0a0a', emoji: '🔴', tagline: "You'll Never Walk Alone" },
+  sky_sports:     { name: 'Sky Sports',     primary: '#0072CE', secondary: '#E8003D', bg: '#000d1a', emoji: '🔵', tagline: 'Where The Action Is',           hasTransferDash: true },
+  pdc:            { name: 'PDC Darts',      primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
+  psa_world_tour: { name: 'PSA World Tour', primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
+  volley_verse:   { name: 'Volley Verse',   primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
 };
 
 export default function ClientHubPage() {
@@ -100,9 +95,9 @@ export default function ClientHubPage() {
         {/* Arsenal Runner - Arsenal only */}
         {client.hasRunner && (
           <GameCard
-            title="Shirt Number Sprint"
-            description="Flappy Bird-style runner through the Emirates. Collect shirt numbers, dodge the goalposts!"
-            emoji="🦕"
+            title="Chase the Team Bus 🚌"
+            description="Don't be late for the match! Dodge obstacles, collect coins, and catch the team bus."
+            emoji="🏆"
             label="RUNNER"
             primary={client.primary}
             accent={client.secondary}
@@ -114,14 +109,28 @@ export default function ClientHubPage() {
         {/* Villa Flap - Aston Villa only */}
         {client.hasVillaFlap && (
           <GameCard
-            title="McGinn Goggles"
+            title="McGinn's Goggle Dash"
             description="John McGinn's iconic goggles celebration goes Flappy Bird! Fly through Villa Park."
             emoji="🥽"
             label="FLAPPY"
             primary={client.primary}
             accent={client.secondary}
             badge="VILLA EXCLUSIVE"
-            onClick={() => router.push('/villa-flap')}
+            onClick={() => router.push('/villa-runner')}
+          />
+        )}
+
+        {/* Transfer Deadline Dash - Sky Sports only */}
+        {client.hasTransferDash && (
+          <GameCard
+            title="Transfer Deadline Dash"
+            description="Timed connections puzzle — group the transfers before the window slams shut!"
+            emoji="⏱️"
+            label="PUZZLE"
+            primary={client.primary}
+            accent={client.secondary}
+            badge="SKY SPORTS EXCLUSIVE"
+            onClick={() => router.push('/transfer-dash')}
           />
         )}
 
