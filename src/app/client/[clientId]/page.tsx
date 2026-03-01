@@ -13,7 +13,7 @@ const CLIENT_DATA: Record<string, {
   pdc:            { name: 'PDC Darts',             primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
   psa_world_tour: { name: 'PSA World Tour',        primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
   volley_verse:   { name: 'Volley Verse',          primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
-  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#FF5C35', secondary: '#FF1477', bg: '#0f0a08', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true },
+  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true },
 };
 
 export default function ClientHubPage() {

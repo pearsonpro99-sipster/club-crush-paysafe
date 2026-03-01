@@ -30,7 +30,7 @@ export default function TinyMovesGame({ onEvent, gameRef }: Props) {
       game = new Phaser.Game({
         type: Phaser.AUTO,
         width, height,
-        backgroundColor: '#0f0a08',
+        backgroundColor: '#060e18',
         parent: containerRef.current!,
         scene,
         scale: { mode: Phaser.Scale.NONE },

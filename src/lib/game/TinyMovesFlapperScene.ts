@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const TM_ORANGE  = 0xFF5C35;
-const TM_PINK    = 0xFF1477;
-const TM_DARK    = 0x0f0a08;
+const TM_BLUE    = 0x4FC3F7;  // light blue primary
+const TM_ACCENT  = 0x0288D1;  // darker blue accent
+const TM_DARK    = 0x060e18;
 const TM_BLACK   = 0x0a0a0a;
 const TM_WHITE   = 0xFFFFFF;
 
@@ -98,18 +98,18 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
 
     // Sky — dark gradient
     const sky = this.add.graphics();
-    sky.fillGradientStyle(TM_DARK, TM_DARK, 0x1a0f0a, 0x1a0f0a, 1);
+    sky.fillGradientStyle(TM_DARK, TM_DARK, 0x0a1a2e, 0x0a1a2e, 1);
     sky.fillRect(0, 0, width, height * 0.55);
 
     // Crowd stands
     const crowd = this.add.graphics();
-    crowd.fillStyle(0x2a1a10, 1);
+    crowd.fillStyle(0x081828, 1);
     crowd.fillRect(0, height * 0.10, width, height * 0.28);
 
     for (let i = 0; i < 120; i++) {
       const cx = Math.random() * width;
       const cy = height * 0.10 + Math.random() * (height * 0.25);
-      crowd.fillStyle(Math.random() > 0.5 ? TM_ORANGE : TM_PINK, 0.55);
+      crowd.fillStyle(Math.random() > 0.5 ? TM_BLUE : TM_ACCENT, 0.55);
       crowd.fillCircle(cx, cy, 2.5 + Math.random() * 2);
     }
 
@@ -125,20 +125,20 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
 
     // Fan chant words
     this.add.text(width * 0.5, height * 0.175, 'TINY MOVES', {
-      fontSize: '22px', color: '#FF5C35', fontStyle: 'bold',
+      fontSize: '22px', color: '#4FC3F7', fontStyle: 'bold',
     }).setOrigin(0.5).setAlpha(0.4).setDepth(2);
     this.add.text(width * 0.24, height * 0.265, 'RUN\nCLUB', {
-      fontSize: '10px', color: '#FF1477', fontStyle: 'bold', align: 'center', lineSpacing: 2,
+      fontSize: '10px', color: '#0288D1', fontStyle: 'bold', align: 'center', lineSpacing: 2,
     }).setOrigin(0.5).setAlpha(0.32).setDepth(2);
     this.add.text(width * 0.76, height * 0.20, 'JUST\nRUN IT', {
-      fontSize: '10px', color: '#FF5C35', fontStyle: 'bold', align: 'center', lineSpacing: 2,
+      fontSize: '10px', color: '#4FC3F7', fontStyle: 'bold', align: 'center', lineSpacing: 2,
     }).setOrigin(0.5).setAlpha(0.25).setDepth(2);
     this.add.text(width * 0.5, height * 0.305, 'TINY MOVES RUN CLUB', {
-      fontSize: '9px', color: '#FF1477', fontStyle: 'bold', letterSpacing: 3,
+      fontSize: '9px', color: '#0288D1', fontStyle: 'bold', letterSpacing: 3,
     }).setOrigin(0.5).setAlpha(0.22).setDepth(2);
 
     // Advertising board
-    crowd.fillStyle(TM_ORANGE, 1);
+    crowd.fillStyle(TM_BLUE, 1);
     crowd.fillRect(0, height * 0.36, width, 10);
     for (let i = 0; i < 4; i++) {
       const adText = this.add.text(
@@ -161,7 +161,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     }
 
     // Orange centre line
-    pitch.fillStyle(TM_ORANGE, 0.15);
+    pitch.fillStyle(TM_BLUE, 0.15);
     pitch.fillRect(0, height * 0.42 + height * 0.20, width, 3);
   }
 
@@ -170,7 +170,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     this.groundGfx = this.add.graphics();
     this.groundGfx.fillStyle(0x111111, 1);
     this.groundGfx.fillRect(0, this.groundY, width, height - this.groundY);
-    this.groundGfx.lineStyle(3, TM_ORANGE, 0.9);
+    this.groundGfx.lineStyle(3, TM_BLUE, 0.9);
     this.groundGfx.lineBetween(0, this.groundY, width, this.groundY);
 
     for (let x = 0; x < width; x += 30) {
@@ -196,7 +196,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     g.clear();
 
     // Body — orange running vest
-    g.fillStyle(TM_ORANGE, 1);
+    g.fillStyle(TM_BLUE, 1);
     g.fillEllipse(0, 0, 32, 26);
 
     // Shorts — black
@@ -204,7 +204,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     g.fillRect(-10, 10, 20, 10);
 
     // Arms in running pose
-    g.fillStyle(TM_ORANGE, 1);
+    g.fillStyle(TM_BLUE, 1);
     g.fillRoundedRect(-22, -10, 14, 5, 3); // left arm back
     g.fillRoundedRect(8, -2, 14, 5, 3);    // right arm forward
 
@@ -232,7 +232,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     g.fillRoundedRect(-10, -28, 20, 12, { tl: 8, tr: 8, bl: 0, br: 0 });
 
     // Sweatband — orange
-    g.fillStyle(TM_ORANGE, 1);
+    g.fillStyle(TM_BLUE, 1);
     g.fillRect(-10, -24, 20, 4);
 
     // Eyes
@@ -244,7 +244,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     g.fillCircle(4.5, -19, 1.8);
 
     // Tiny Moves logo dot on chest
-    g.fillStyle(TM_PINK, 0.9);
+    g.fillStyle(TM_ACCENT, 0.9);
     g.fillCircle(0, -4, 3);
   }
 
@@ -255,13 +255,13 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     const hud = this.add.graphics();
     hud.fillStyle(TM_BLACK, 0.92);
     hud.fillRect(0, 0, width, 50);
-    hud.fillStyle(TM_ORANGE, 1);
+    hud.fillStyle(TM_BLUE, 1);
     hud.fillRect(0, 48, width, 2);
     hud.setDepth(20);
 
     this.add.text(12, 8, 'SCORE', { fontSize: '9px', color: '#ffffff88', fontStyle: 'bold', letterSpacing: 2 }).setDepth(21);
     this.scoreText = this.add.text(12, 20, '0', { fontSize: '20px', color: '#ffffff', fontStyle: 'bold' }).setDepth(21);
-    this.add.text(width / 2, 14, '🏃 TINY MOVES', { fontSize: '13px', color: '#FF5C35', fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(21);
+    this.add.text(width / 2, 14, '🏃 TINY MOVES', { fontSize: '13px', color: '#4FC3F7', fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(21);
   }
 
   // ─── START SCREEN ──────────────────────────────────────────────────────────
@@ -276,12 +276,12 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     const emoji = this.add.text(width / 2, height * 0.2, '🏃', { fontSize: '72px' }).setOrigin(0.5).setDepth(31);
     this.tweens.add({ targets: emoji, y: height * 0.2 - 10, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
-    this.add.text(width / 2, height * 0.38, 'Tiny Moves', { fontSize: '28px', color: '#FF5C35', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
-    this.add.text(width / 2, height * 0.46, 'RUN CLUB DASH', { fontSize: '22px', color: '#FF1477', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
+    this.add.text(width / 2, height * 0.38, 'Tiny Moves', { fontSize: '28px', color: '#4FC3F7', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
+    this.add.text(width / 2, height * 0.46, 'RUN CLUB DASH', { fontSize: '22px', color: '#0288D1', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
     this.add.text(width / 2, height * 0.53, 'Dodge the cones, keep running!', { fontSize: '12px', color: '#ffffff55' }).setOrigin(0.5).setDepth(31);
 
     const btn = this.add.graphics().setDepth(31);
-    btn.fillStyle(TM_ORANGE, 1);
+    btn.fillStyle(TM_BLUE, 1);
     btn.fillRoundedRect(-100, -24, 200, 48, 24);
     btn.setPosition(width / 2, height * 0.66);
 
@@ -326,11 +326,11 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
 
     // Top pipe — orange cone/pillar with Adidas stripes
     const top = this.add.graphics();
-    top.fillStyle(TM_ORANGE, 1);
+    top.fillStyle(TM_BLUE, 1);
     top.fillRect(0, 0, PIPE_WIDTH, gapTopY - 50);
-    top.fillStyle(0xcc4520, 1);
+    top.fillStyle(0x0277BD, 1);
     top.fillRoundedRect(-6, gapTopY - 66, PIPE_WIDTH + 12, 18, 4);
-    top.lineStyle(2, TM_PINK, 0.4);
+    top.lineStyle(2, TM_ACCENT, 0.4);
     top.strokeRect(0, 0, PIPE_WIDTH, gapTopY - 50);
     // Adidas 3-stripe detail
     top.fillStyle(TM_WHITE, 0.12);
@@ -343,11 +343,11 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
     // Bottom pipe
     const bottomY = gapTopY + gap;
     const bottom = this.add.graphics();
-    bottom.fillStyle(TM_ORANGE, 1);
+    bottom.fillStyle(TM_BLUE, 1);
     bottom.fillRect(0, 0, PIPE_WIDTH, this.groundY - bottomY);
-    bottom.fillStyle(0xcc4520, 1);
+    bottom.fillStyle(0x0277BD, 1);
     bottom.fillRoundedRect(-6, 0, PIPE_WIDTH + 12, 18, 4);
-    bottom.lineStyle(2, TM_PINK, 0.4);
+    bottom.lineStyle(2, TM_ACCENT, 0.4);
     bottom.strokeRect(0, 0, PIPE_WIDTH, this.groundY - bottomY);
     // Adidas 3-stripe detail
     bottom.fillStyle(TM_WHITE, 0.12);
@@ -407,7 +407,7 @@ export class TinyMovesFlapperScene extends Phaser.Scene {
 
         // Score pop — pizza!
         const pop = this.add.text(PLAYER_X + 20, this.playerY - 30, '🍕 +1', {
-          fontSize: '18px', color: '#FF5C35', fontStyle: 'bold',
+          fontSize: '18px', color: '#4FC3F7', fontStyle: 'bold',
         }).setDepth(15);
         this.tweens.add({ targets: pop, y: pop.y - 40, alpha: 0, duration: 600, onComplete: () => pop.destroy() });
       }
