@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean; hasTinyMovesFlap?: boolean;
+  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
 }> = {
   arsenal:        { name: 'Arsenal FC',          primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners',                  hasRunner: true },
   aston_villa:    { name: 'Aston Villa',          primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',              hasVillaFlap: true },
@@ -13,7 +13,7 @@ const CLIENT_DATA: Record<string, {
   pdc:            { name: 'PDC Darts',             primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
   psa_world_tour: { name: 'PSA World Tour',        primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
   volley_verse:   { name: 'Volley Verse',          primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
-  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true },
+  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true, hasTinyMovesSurge: true },
 };
 
 export default function ClientHubPage() {
@@ -146,6 +146,20 @@ export default function ClientHubPage() {
             accent={client.secondary}
             badge="TINY MOVES EXCLUSIVE"
             onClick={() => router.push('/tiny-moves')}
+          />
+        )}
+
+        {/* 5K Surge - Tiny Moves Run Club only */}
+        {client.hasTinyMovesSurge && (
+          <GameCard
+            title="5K Surge"
+            description="React fast when the sprint signal fires! Tap in time to surge ahead. Miss too many and your race is over."
+            emoji="⚡"
+            label="REACTION"
+            primary={client.primary}
+            accent={client.secondary}
+            badge="TINY MOVES EXCLUSIVE"
+            onClick={() => router.push('/tiny-moves-surge')}
           />
         )}
 

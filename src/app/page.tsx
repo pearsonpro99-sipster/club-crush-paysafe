@@ -8,7 +8,7 @@ const CLIENTS = [
   { id: 'pdc',           name: 'PDC Darts',       emoji: '🎯', primary: '#00A651', games: 1 },
   { id: 'psa_world_tour',name: 'PSA World Tour',  emoji: '🎾', primary: '#002D74', games: 1 },
   { id: 'volley_verse',  name: 'Volley Verse',    emoji: '🏐', primary: '#0057A8', games: 1 },
-  { id: 'tiny_moves',   name: 'Tiny Moves RC',   emoji: '🏃', primary: '#4FC3F7', games: 2 },
+  { id: 'tiny_moves',   name: 'Tiny Moves RC',   emoji: '🏃', primary: '#4FC3F7', games: 3 },
 ];
 export default function HomePage() {
   const router = useRouter();
@@ -35,9 +35,9 @@ export default function HomePage() {
             <div style={{ width: 42, height: 42, borderRadius: 12, flexShrink: 0, background: client.primary + '22', border: `2px solid ${client.primary}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{client.emoji}</div>
             <div style={{ flex: 1 }}>
               <div style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>{client.name}</div>
-              <div style={{ color: '#ffffff40', fontSize: 11, marginTop: 2 }}>{client.games === 2 ? '🎮 2 games available' : '🎮 1 game available'}</div>
+              <div style={{ color: '#ffffff40', fontSize: 11, marginTop: 2 }}>{`🎮 ${client.games} game${client.games === 1 ? '' : 's'} available`}</div>
             </div>
-            {client.games === 2 && <span style={{ background: client.primary + '33', color: client.primary, fontSize: 9, fontWeight: 800, letterSpacing: 1, padding: '3px 7px', borderRadius: 6, textTransform: 'uppercase' as const }}>NEW</span>}
+            {client.games >= 2 && <span style={{ background: client.primary + '33', color: client.primary, fontSize: 9, fontWeight: 800, letterSpacing: 1, padding: '3px 7px', borderRadius: 6, textTransform: 'uppercase' as const }}>NEW</span>}
             <span style={{ color: '#ffffff30', fontSize: 20 }}>›</span>
           </button>
         ))}
