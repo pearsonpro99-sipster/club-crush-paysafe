@@ -154,6 +154,25 @@ export const THEMES: Record<string, ClubTheme> = {
       { id: 4, label: 'Trophy',    colour: '#FFD700', emoji: '🏆' },
     ],
   },
+
+  tiny_moves: {
+    clubId: 'tiny_moves',
+    clubName: 'Tiny Moves Run Club',
+    primaryColour: '#FF5C35',
+    secondaryColour: '#FF1477',
+    accentColour: '#FFFFFF',
+    backgroundColour: '#0f0a08',
+    levelLabel: 'Run',
+    seasonLabel: 'Season',
+    totalLevels: 20,
+    tiles: [
+      { id: 0, label: 'Orange',    colour: '#FF5C35', emoji: '🟠' },
+      { id: 1, label: 'Pink',      colour: '#FF1477', emoji: '🩷' },
+      { id: 2, label: 'Pizza',     colour: '#FF8C00', emoji: '🍕' },
+      { id: 3, label: 'Trophy',    colour: '#FFD700', emoji: '🏆' },
+      { id: 4, label: 'Runner',    colour: '#FFFFFF', emoji: '🏃' },
+    ],
+  },
 };
 
 export const DEFAULT_THEME = THEMES.arsenal;

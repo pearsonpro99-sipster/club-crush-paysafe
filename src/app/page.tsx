@@ -8,6 +8,7 @@ const CLIENTS = [
   { id: 'pdc',           name: 'PDC Darts',       emoji: '🎯', primary: '#00A651', games: 1 },
   { id: 'psa_world_tour',name: 'PSA World Tour',  emoji: '🎾', primary: '#002D74', games: 1 },
   { id: 'volley_verse',  name: 'Volley Verse',    emoji: '🏐', primary: '#0057A8', games: 1 },
+  { id: 'tiny_moves',   name: 'Tiny Moves RC',   emoji: '🏃', primary: '#FF5C35', games: 2 },
 ];
 export default function HomePage() {
   const router = useRouter();

@@ -4,15 +4,16 @@ import { useParams, useRouter } from 'next/navigation';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean;
+  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean; hasTinyMovesFlap?: boolean;
 }> = {
-  arsenal:        { name: 'Arsenal FC',     primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners',                  hasRunner: true },
-  aston_villa:    { name: 'Aston Villa',    primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',              hasVillaFlap: true },
-  liverpool:      { name: 'Liverpool FC',   primary: '#C8102E', secondary: '#F6EB61', bg: '#1a0a0a', emoji: '🔴', tagline: "You'll Never Walk Alone" },
-  sky_sports:     { name: 'Sky Sports',     primary: '#0072CE', secondary: '#E8003D', bg: '#000d1a', emoji: '🔵', tagline: 'Where The Action Is',           hasTransferDash: true },
-  pdc:            { name: 'PDC Darts',      primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
-  psa_world_tour: { name: 'PSA World Tour', primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
-  volley_verse:   { name: 'Volley Verse',   primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
+  arsenal:        { name: 'Arsenal FC',          primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners',                  hasRunner: true },
+  aston_villa:    { name: 'Aston Villa',          primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',              hasVillaFlap: true },
+  liverpool:      { name: 'Liverpool FC',          primary: '#C8102E', secondary: '#F6EB61', bg: '#1a0a0a', emoji: '🔴', tagline: "You'll Never Walk Alone" },
+  sky_sports:     { name: 'Sky Sports',            primary: '#0072CE', secondary: '#E8003D', bg: '#000d1a', emoji: '🔵', tagline: 'Where The Action Is',           hasTransferDash: true },
+  pdc:            { name: 'PDC Darts',             primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
+  psa_world_tour: { name: 'PSA World Tour',        primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
+  volley_verse:   { name: 'Volley Verse',          primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
+  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#FF5C35', secondary: '#FF1477', bg: '#0f0a08', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true },
 };
 
 export default function ClientHubPage() {
@@ -131,6 +132,20 @@ export default function ClientHubPage() {
             accent={client.secondary}
             badge="SKY SPORTS EXCLUSIVE"
             onClick={() => router.push('/transfer-dash')}
+          />
+        )}
+
+        {/* Tiny Moves Dash - Tiny Moves Run Club only */}
+        {client.hasTinyMovesFlap && (
+          <GameCard
+            title="Tiny Moves Run Club Dash"
+            description="Dodge the cones, collect pizzas, and keep running! How far can you go?"
+            emoji="🏃"
+            label="FLAPPY"
+            primary={client.primary}
+            accent={client.secondary}
+            badge="TINY MOVES EXCLUSIVE"
+            onClick={() => router.push('/tiny-moves')}
           />
         )}
 

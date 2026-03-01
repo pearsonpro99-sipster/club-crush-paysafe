@@ -117,6 +117,23 @@ function GameContent() {
             </div>
           )}
 
+          {/* Tiny Moves Dash — Tiny Moves Run Club only */}
+          {selectedClub === 'tiny_moves' && (
+            <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
+              <p style={{ color: '#ffffff40', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 10 }}>Also Available</p>
+              <a href="/tiny-moves" style={{ textDecoration: 'none' }}>
+                <div style={{ background: 'linear-gradient(135deg, #FF5C35 0%, #8a2010 100%)', borderRadius: 16, padding: '16px', border: '2px solid #FF1477', display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <span style={{ fontSize: 40 }}>🏃</span>
+                  <div>
+                    <p style={{ color: '#ffffff', fontWeight: 900, fontSize: 16, margin: 0 }}>Tiny Moves Run Club Dash</p>
+                    <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>Dodge the cones · Collect pizzas</p>
+                  </div>
+                  <span style={{ color: '#ffffff44', marginLeft: 'auto', fontSize: 20 }}>▶</span>
+                </div>
+              </a>
+            </div>
+          )}
+
           {/* Runner game link — Arsenal only */}
           {selectedClub === 'arsenal' && (
             <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
