@@ -1,1 +1,25 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512'><rect width='512' height='512' fill='#0a0a0f'/><text x='50%' y='54%' font-size='230' dominant-baseline='middle' text-anchor='middle'>💎</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <rect width="1000" height="1000" fill="#150a2a"/>
+  <!-- White D with step notch at bottom-right -->
+  <path fill="white" fill-rule="evenodd" d="
+    M 318,230 L 318,770 L 505,770
+    C 600,770 665,745 710,698
+    C 755,651 775,580 775,500
+    C 775,420 755,349 710,302
+    C 665,255 600,230 505,230 Z
+    M 405,325 L 468,325
+    C 540,325 590,344 622,381
+    C 654,418 668,458 668,500
+    C 668,542 654,582 622,619
+    C 590,656 540,675 468,675
+    L 405,675 Z
+  "/>
+  <rect x="558" y="663" width="220" height="107" fill="#150a2a"/>
+  <defs>
+    <linearGradient id="pg" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e940c8"/>
+      <stop offset="100%" stop-color="#5b28d4"/>
+    </linearGradient>
+  </defs>
+  <polygon points="288,378 288,622 508,500" fill="url(#pg)"/>
+</svg>

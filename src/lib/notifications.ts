@@ -2,11 +2,17 @@ import { getStreak } from './streak';
 
 const PERM_KEY = 'notif_asked';
 
-/** ms until the next 08:15:00 local time */
-function msUntilNext0815(): number {
+const DAILY_TIMES = [
+  { slotId: 'morning', hour: 8,  minute: 15 },
+  { slotId: 'midday',  hour: 12, minute: 0  },
+  { slotId: 'evening', hour: 19, minute: 0  },
+];
+
+/** ms until the next occurrence of a given HH:MM local time */
+function msUntilNext(hour: number, minute: number): number {
   const now  = new Date();
   const next = new Date(now);
-  next.setHours(8, 15, 0, 0);
+  next.setHours(hour, minute, 0, 0);
   if (next <= now) next.setDate(next.getDate() + 1);
   return next.getTime() - now.getTime();
 }
@@ -41,19 +47,40 @@ export function hasBeenAsked(): boolean {
 }
 
 /**
- * Schedule the daily 08:15 notification via the Service Worker.
- * Safe to call on every app load — the SW debounces.
+ * Schedule daily notifications at 8:15, 12:00 and 19:00 via the Service Worker.
+ * Safe to call on every app load — the SW debounces per slot.
  */
-export async function scheduleDailyNotification(clubName: string): Promise<void> {
+export async function scheduleDailyNotifications(clubName: string): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if (Notification.permission !== 'granted') return;
+  const reg = await registerSW();
+  if (!reg?.active) return;
+
+  const streak = getStreak();
+  for (const { slotId, hour, minute } of DAILY_TIMES) {
+    reg.active.postMessage({
+      type: 'SCHEDULE_DAILY',
+      slotId,
+      msUntilNext: msUntilNext(hour, minute),
+      streakCount: streak,
+      clubName,
+    });
+  }
+}
+
+/** Fire a test notification in ~2 seconds. */
+export async function triggerTestNotification(clubName: string): Promise<void> {
   if (typeof window === 'undefined') return;
   if (Notification.permission !== 'granted') return;
   const reg = await registerSW();
   if (!reg?.active) return;
 
   reg.active.postMessage({
-    type: 'SCHEDULE_DAILY',
-    msUntilNext: msUntilNext0815(),
+    type: 'TEST_NOTIFICATION',
     streakCount: getStreak(),
     clubName,
   });
 }
+
+// Keep old singular export for any callers not yet updated
+export const scheduleDailyNotification = scheduleDailyNotifications;

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { MockUser, signIn, signUp, confirmSignUp, signOut, deleteAccount } from '@/lib/auth';
+import { trackSignUp, trackLogin } from '@/lib/analytics';
 
 type View = 'signin' | 'signup' | 'verify' | 'account';
 
@@ -31,6 +32,7 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
     setLoading(true);
     try {
       const result = await signIn(email, password);
+      trackLogin();
       onAuthChange(result);
       onClose();
     } catch (err: unknown) {
@@ -66,7 +68,9 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
     try {
       await confirmSignUp(pendingEmail, code);
       // Auto sign-in after successful confirmation
+      trackSignUp();
       const result = await signIn(pendingEmail, pendingPassword);
+      trackLogin();
       onAuthChange(result);
       onClose();
     } catch (err: unknown) {

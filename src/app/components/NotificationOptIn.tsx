@@ -5,8 +5,9 @@ import {
   notificationPermission,
   hasBeenAsked,
   requestNotificationPermission,
-  scheduleDailyNotification,
+  scheduleDailyNotifications,
 } from '@/lib/notifications';
+import { trackNotificationOptIn } from '@/lib/analytics';
 
 interface Props {
   clubName: string;
@@ -22,7 +23,7 @@ export default function NotificationOptIn({ clubName, primary }: Props) {
     if (perm === 'unsupported') return;
     if (perm === 'granted') {
       setGranted(true);
-      scheduleDailyNotification(clubName);
+      scheduleDailyNotifications(clubName);
       return;
     }
     // Show prompt if not yet asked
@@ -34,7 +35,8 @@ export default function NotificationOptIn({ clubName, primary }: Props) {
     setVisible(false);
     if (ok) {
       setGranted(true);
-      scheduleDailyNotification(clubName);
+      trackNotificationOptIn();
+      scheduleDailyNotifications(clubName);
     }
   };
 
@@ -62,7 +64,7 @@ export default function NotificationOptIn({ clubName, primary }: Props) {
           Daily streak reminder
         </p>
         <p style={{ color: '#ffffff55', fontSize: 11, margin: 0 }}>
-          Get a nudge at 8:15 AM so you never miss a day
+          Reminders at 8:15, 12:00 &amp; 19:00 so you never miss a day
         </p>
       </div>
 

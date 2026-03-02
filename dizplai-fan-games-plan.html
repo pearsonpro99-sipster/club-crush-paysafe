@@ -250,7 +250,7 @@
     <div class="cover-meta">
       <div class="cover-meta-item">
         <div class="label">Status</div>
-        <div class="val">Auth Built · Widget Foundation Ready</div>
+        <div class="val">Auth Built · PWA Live · Analytics &amp; Notifications On</div>
       </div>
       <div class="cover-meta-item">
         <div class="label">Tech</div>
@@ -319,17 +319,19 @@
             <span class="tag g">Authenticated API fetch wrapper ✓</span>
             <span class="tag g">FanGamesWidget.vue foundation ✓</span>
             <span class="tag g">PWA — installs to home screen</span>
+            <span class="tag g">Dizplai logo on PWA home-screen icon ✓</span>
+            <span class="tag g">Push notifications — SW + opt-in (8:15, 12:00, 19:00) ✓</span>
+            <span class="tag g">GA4 analytics — G-T622315MPC ✓</span>
           </div>
         </div>
         <div class="card card-gold">
           <h3>Remaining to Production</h3>
           <div class="tags">
-            <span class="tag a">Cognito User Pool + .env.local config</span>
+            <span class="tag a">Cognito User Pool + .env.local config (eng task)</span>
             <span class="tag r">Score API + DynamoDB backend</span>
             <span class="tag r">Stripe / Paysafe payments</span>
-            <span class="tag r">Push notifications</span>
+            <span class="tag r">Web Push server (VAPID — currently local SW only)</span>
             <span class="tag a">Mythos widget wiring + config panel</span>
-            <span class="tag r">Datadog analytics</span>
             <span class="tag r">Club admin dashboard</span>
             <span class="tag r">Per-client white-label config</span>
           </div>
@@ -493,11 +495,11 @@
         </div>
 
         <div class="tl-item">
-          <div class="tl-dot grey">4</div>
+          <div class="tl-dot" style="background:#e08000">⚡</div>
           <div class="tl-body">
-            <div class="tl-badge b-later">Weeks 6–9</div>
+            <div class="tl-badge" style="background:#fff4e1;color:#b06000">Partial · Notifications Live</div>
             <h3>Phase 4 — Payments + Notifications</h3>
-            <p>Stripe Checkout (or Paysafe/Skrill from existing Dizplai discovery) for coin packs. Real IAP: Starter £0.99, Fan Pack £2.49, Season Pass £4.99. Push notification opt-in via Service Worker — daily streak reminders, prize draw results, match-day bonuses.</p>
+            <p><strong>Done:</strong> Service Worker registered, local push notifications via SW postMessage — daily streak reminders at 8:15, 12:00 and 19:00. Opt-in banner with Enable / Not now. Test trigger fires in 2s. GA4 analytics wired (G-T622315MPC) — sign-up, login, notification opt-in events tracked. <strong>Remaining:</strong> Stripe Checkout (or Paysafe/Skrill) for coin packs — Starter £0.99, Fan Pack £2.49, Season Pass £4.99. VAPID server-push for re-engagement when app is closed.</p>
           </div>
         </div>
 
