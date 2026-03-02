@@ -111,6 +111,31 @@ function GameContent() {
             Play {theme.levelLabel} {level}
           </button>
 
+          {/* ── Skip Level / Leaderboard Boost ── */}
+          <SkipLevelPanel
+            level={level}
+            coins={coins}
+            levelLabel={theme.levelLabel}
+            primary={theme.primaryColour}
+            accent={theme.accentColour}
+            selectedClub={selectedClub}
+            onSkip={() => {
+              const skipCost = Math.min(Math.max(level * 15, 100), 400);
+              if (coins < skipCost) { setShowCoinShop(true); return; }
+              const fanPts = level * 120; // less than playing earns
+              recordScore(selectedClub, 'crush_skip', fanPts);
+              setCoins(prev => prev - skipCost);
+              setLevel(prev => { const next = prev + 1; saveLevel(selectedClub, next); return next; });
+            }}
+            onBoost={() => {
+              // Boost: spend 250 coins → +800 fan pts directly
+              if (coins < 250) { setShowCoinShop(true); return; }
+              recordScore(selectedClub, 'boost', 800);
+              setCoins(prev => prev - 250);
+            }}
+            onBuyCoins={() => setShowCoinShop(true)}
+          />
+
           {/* McGinn Goggle Dash — Aston Villa only */}
           {selectedClub === 'aston_villa' && (
             <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
@@ -168,4 +193,90 @@ function GameContent() {
 
 export default function GamePage() {
   return <Suspense fallback={<div style={{ background: '#111', minHeight: '100vh' }} />}><GameContent /></Suspense>;
+}
+
+// ── Skip Level / Leaderboard Boost panel ─────────────────────────────────────
+function SkipLevelPanel({
+  level, coins, levelLabel, primary, accent, selectedClub, onSkip, onBoost, onBuyCoins,
+}: {
+  level: number; coins: number; levelLabel: string;
+  primary: string; accent: string; selectedClub: string;
+  onSkip: () => void; onBoost: () => void; onBuyCoins: () => void;
+}) {
+  const skipCost  = Math.min(Math.max(level * 15, 100), 400);
+  const boostCost = 250;
+  const canSkip   = coins >= skipCost;
+  const canBoost  = coins >= boostCost;
+
+  return (
+    <div style={{ width: '100%', maxWidth: 360, marginTop: 16 }}>
+      <p style={{ color: '#ffffff30', fontSize: 9, letterSpacing: 3, textTransform: 'uppercase', textAlign: 'center', marginBottom: 10 }}>
+        Shortcuts &amp; Boosts
+      </p>
+
+      {/* Skip Level */}
+      <button
+        onClick={canSkip ? onSkip : onBuyCoins}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: canSkip ? primary + '22' : '#ffffff08',
+          border: `1px solid ${canSkip ? primary + '55' : '#ffffff15'}`,
+          borderRadius: 14, padding: '12px 16px', marginBottom: 8,
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <div>
+          <p style={{ color: '#fff', fontWeight: 800, fontSize: 14, margin: 0 }}>
+            ⚡ Skip {levelLabel} {level}
+          </p>
+          <p style={{ color: '#ffffff55', fontSize: 11, margin: '2px 0 0' }}>
+            Advance instantly · earn {(level * 120).toLocaleString()} fan pts
+          </p>
+        </div>
+        <div style={{
+          background: canSkip ? primary : '#ffffff15',
+          borderRadius: 10, padding: '6px 12px',
+          color: '#fff', fontWeight: 900, fontSize: 12, whiteSpace: 'nowrap',
+        }}>
+          🪙 {skipCost}
+        </div>
+      </button>
+
+      {/* Leaderboard Boost */}
+      <button
+        onClick={canBoost ? onBoost : onBuyCoins}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: canBoost ? '#FFD70015' : '#ffffff08',
+          border: `1px solid ${canBoost ? '#FFD70040' : '#ffffff15'}`,
+          borderRadius: 14, padding: '12px 16px',
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <div>
+          <p style={{ color: '#fff', fontWeight: 800, fontSize: 14, margin: 0 }}>
+            🏆 Leaderboard Boost
+          </p>
+          <p style={{ color: '#ffffff55', fontSize: 11, margin: '2px 0 0' }}>
+            Instantly add 800 fan pts to your score
+          </p>
+        </div>
+        <div style={{
+          background: canBoost ? '#FFD70033' : '#ffffff15',
+          borderRadius: 10, padding: '6px 12px',
+          color: canBoost ? '#FFD700' : '#ffffff44', fontWeight: 900, fontSize: 12, whiteSpace: 'nowrap',
+        }}>
+          🪙 {boostCost}
+        </div>
+      </button>
+
+      {!canSkip && !canBoost && (
+        <p style={{ color: '#ffffff33', fontSize: 11, textAlign: 'center', marginTop: 8 }}>
+          <span onClick={onBuyCoins} style={{ color: '#FFD700', cursor: 'pointer', textDecoration: 'underline' }}>
+            Top up coins
+          </span>{' '}to unlock shortcuts
+        </p>
+      )}
+    </div>
+  );
 }

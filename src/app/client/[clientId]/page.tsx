@@ -4,6 +4,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStreak } from '@/lib/streak';
 import { getFanScore } from '@/lib/fanScore';
+import { MockUser, getUser } from '@/lib/auth';
+import AuthModal from '@/app/components/AuthModal';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
@@ -22,10 +24,13 @@ export default function ClientHubPage() {
 
   const [streak, setStreak]     = useState(0);
   const [fanScore, setFanScore] = useState(0);
+  const [user, setUser]         = useState<MockUser | null>(null);
+  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     setStreak(getStreak());
     setFanScore(getFanScore(clientId));
+    setUser(getUser());
   }, [clientId]);
 
   return (
@@ -52,12 +57,28 @@ export default function ClientHubPage() {
           {client.emoji} {client.name}
         </div>
 
-        <button onClick={() => router.push('/leaderboard')} style={{
-          background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: 20, padding: '6px 10px', cursor: 'pointer',
-          color: '#FFD700', fontSize: 12, fontWeight: 700,
-        }}>
-          🏆
+        <button
+          onClick={() => setShowAuth(true)}
+          style={{
+            background: user ? 'rgba(0,114,206,0.7)' : 'rgba(0,0,0,0.25)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 20, padding: user ? '6px 12px' : '6px 10px',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+            color: '#fff', fontSize: 12, fontWeight: 700,
+          }}
+        >
+          {user ? (
+            <>
+              <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900 }}>
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span>{user.name.split(' ')[0]}</span>
+            </>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          )}
         </button>
       </div>
 
@@ -173,6 +194,14 @@ export default function ClientHubPage() {
           <span style={{ color: '#ffffff30', fontSize: 22 }}>›</span>
         </div>
       </div>
+
+      {showAuth && (
+        <AuthModal
+          user={user}
+          onClose={() => setShowAuth(false)}
+          onAuthChange={(u) => { setUser(u); setShowAuth(false); }}
+        />
+      )}
     </div>
   );
 }
