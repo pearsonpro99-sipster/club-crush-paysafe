@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MockUser, signIn, signUp, signOut, deleteAccount } from '@/lib/auth';
+import { MockUser, signIn, signUp, confirmSignUp, signOut, deleteAccount } from '@/lib/auth';
 
-type View = 'signin' | 'signup' | 'account';
+type View = 'signin' | 'signup' | 'verify' | 'account';
 
 interface AuthModalProps {
   user: MockUser | null;
@@ -12,47 +12,93 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProps) {
-  const [view, setView]         = useState<View>(user ? 'account' : 'signin');
-  const [name, setName]         = useState('');
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
-  const [confirm, setConfirm]   = useState(false);
+  const [view, setView]               = useState<View>(user ? 'account' : 'signin');
+  const [name, setName]               = useState('');
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [code, setCode]               = useState('');
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
+  const [confirm, setConfirm]         = useState(false);
+  // Held during signup → verify flow so we can auto-sign-in after confirmation
+  const [pendingEmail, setPendingEmail]       = useState('');
+  const [pendingPassword, setPendingPassword] = useState('');
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!email || !password) { setError('Please fill in all fields.'); return; }
-    const result = signIn(email);
-    if (!result) {
-      setError('No account found. Please sign up first.');
-      return;
+    setLoading(true);
+    try {
+      const result = await signIn(email, password);
+      onAuthChange(result);
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    onAuthChange(result);
-    onClose();
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!name || !email || !password) { setError('Please fill in all fields.'); return; }
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
-    const result = signUp(name, email);
-    onAuthChange(result);
-    onClose();
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
+    setLoading(true);
+    try {
+      await signUp(name, email, password);
+      setPendingEmail(email);
+      setPendingPassword(password);
+      setView('verify');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Sign-up failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignOut = () => {
-    signOut();
-    onAuthChange(null);
-    onClose();
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!code) { setError('Please enter the verification code.'); return; }
+    setLoading(true);
+    try {
+      await confirmSignUp(pendingEmail, code);
+      // Auto sign-in after successful confirmation
+      const result = await signIn(pendingEmail, pendingPassword);
+      onAuthChange(result);
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Verification failed. Please check your code.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleSignOut = async () => {
+    setLoading(true);
+    try {
+      await signOut();
+      onAuthChange(null);
+      onClose();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
     if (!confirm) { setConfirm(true); return; }
-    deleteAccount();
-    onAuthChange(null);
-    onClose();
+    setLoading(true);
+    try {
+      await deleteAccount();
+      onAuthChange(null);
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Delete failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const INPUT = {
@@ -62,8 +108,16 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
   };
   const BTN_PRIMARY = {
     width: '100%', padding: '14px', borderRadius: 12, border: 'none',
-    background: '#0072CE', color: '#fff', fontSize: 15, fontWeight: 800,
-    cursor: 'pointer', letterSpacing: 0.5,
+    background: loading ? '#0072CE88' : '#0072CE',
+    color: '#fff', fontSize: 15, fontWeight: 800,
+    cursor: loading ? 'default' : 'pointer', letterSpacing: 0.5,
+  };
+
+  const viewTitle = () => {
+    if (view === 'account') return `Hi, ${user?.name?.split(' ')[0]} 👋`;
+    if (view === 'signin')  return 'Sign In';
+    if (view === 'signup')  return 'Create Account';
+    return 'Check Your Email';
   };
 
   return (
@@ -93,7 +147,7 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
               Powered by AWS Cognito
             </p>
             <h2 style={{ color: '#fff', fontSize: 18, fontWeight: 900, margin: 0 }}>
-              {view === 'account' ? `Hi, ${user?.name?.split(' ')[0]} 👋` : view === 'signin' ? 'Sign In' : 'Create Account'}
+              {viewTitle()}
             </h2>
           </div>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#ffffff44', fontSize: 20, cursor: 'pointer', padding: 0 }}>✕</button>
@@ -120,13 +174,15 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
                 <p style={{ color: '#ffffff40', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', margin: '0 0 8px' }}>Account</p>
                 <p style={{ color: '#ffffff66', fontSize: 12, margin: 0, lineHeight: 1.5 }}>
                   Your fan score and game progress are linked to this account.
-                  Full Cognito integration coming — your data will sync across devices.
+                  Scores sync across devices once the backend API is connected.
                 </p>
               </div>
 
-              <button onClick={handleSignOut} style={{ ...BTN_PRIMARY, background: '#ffffff12', marginBottom: 8 }}>
-                Sign Out
+              <button onClick={handleSignOut} disabled={loading} style={{ ...BTN_PRIMARY, background: loading ? '#ffffff08' : '#ffffff12', marginBottom: 8 }}>
+                {loading ? 'Signing out…' : 'Sign Out'}
               </button>
+
+              {error && <p style={{ color: '#ff6b6b', fontSize: 12, margin: '0 0 8px', textAlign: 'center' }}>{error}</p>}
 
               {!confirm ? (
                 <button onClick={handleDelete} style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'transparent', color: '#ff5555', fontSize: 12, cursor: 'pointer' }}>
@@ -135,8 +191,8 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
               ) : (
                 <div style={{ textAlign: 'center' }}>
                   <p style={{ color: '#ff5555', fontSize: 12, marginBottom: 8 }}>Are you sure? This cannot be undone.</p>
-                  <button onClick={handleDelete} style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1px solid #ff5555', background: 'transparent', color: '#ff5555', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-                    Yes, delete my account
+                  <button onClick={handleDelete} disabled={loading} style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1px solid #ff5555', background: 'transparent', color: '#ff5555', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                    {loading ? 'Deleting…' : 'Yes, delete my account'}
                   </button>
                 </div>
               )}
@@ -155,7 +211,9 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
                 onChange={e => setPassword(e.target.value)} style={INPUT} autoComplete="current-password"
               />
               {error && <p style={{ color: '#ff6b6b', fontSize: 12, margin: 0 }}>{error}</p>}
-              <button type="submit" style={BTN_PRIMARY}>Sign In</button>
+              <button type="submit" disabled={loading} style={BTN_PRIMARY}>
+                {loading ? 'Signing in…' : 'Sign In'}
+              </button>
               <p style={{ color: '#ffffff33', fontSize: 12, textAlign: 'center', margin: '4px 0 0' }}>
                 No account?{' '}
                 <span onClick={() => { setView('signup'); setError(''); }} style={{ color: '#4FC3F7', cursor: 'pointer', fontWeight: 700 }}>
@@ -177,11 +235,13 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
                 onChange={e => setEmail(e.target.value)} style={INPUT} autoComplete="email"
               />
               <input
-                type="password" placeholder="Password (min 6 chars)" value={password}
+                type="password" placeholder="Password (min 8 chars)" value={password}
                 onChange={e => setPassword(e.target.value)} style={INPUT} autoComplete="new-password"
               />
               {error && <p style={{ color: '#ff6b6b', fontSize: 12, margin: 0 }}>{error}</p>}
-              <button type="submit" style={BTN_PRIMARY}>Create Account</button>
+              <button type="submit" disabled={loading} style={BTN_PRIMARY}>
+                {loading ? 'Creating account…' : 'Create Account'}
+              </button>
               <p style={{ color: '#ffffff33', fontSize: 12, textAlign: 'center', margin: '4px 0 0' }}>
                 Already have an account?{' '}
                 <span onClick={() => { setView('signin'); setError(''); }} style={{ color: '#4FC3F7', cursor: 'pointer', fontWeight: 700 }}>
@@ -191,11 +251,38 @@ export default function AuthModal({ user, onClose, onAuthChange }: AuthModalProp
             </form>
           )}
 
+          {/* ── VERIFY VIEW ── */}
+          {view === 'verify' && (
+            <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: '#0072CE18', border: '1px solid #0072CE33', borderRadius: 12, padding: '12px 14px', textAlign: 'center' }}>
+                <p style={{ color: '#4FC3F7', fontWeight: 800, fontSize: 14, margin: '0 0 4px' }}>📧 Check your email</p>
+                <p style={{ color: '#ffffff55', fontSize: 12, margin: 0 }}>
+                  We sent a 6-digit code to <strong style={{ color: '#ffffffaa' }}>{pendingEmail}</strong>
+                </p>
+              </div>
+              <input
+                type="text" placeholder="Enter 6-digit code" value={code}
+                onChange={e => setCode(e.target.value)} style={{ ...INPUT, textAlign: 'center', fontSize: 20, letterSpacing: 6, fontWeight: 700 }}
+                inputMode="numeric" maxLength={6} autoComplete="one-time-code"
+              />
+              {error && <p style={{ color: '#ff6b6b', fontSize: 12, margin: 0 }}>{error}</p>}
+              <button type="submit" disabled={loading} style={BTN_PRIMARY}>
+                {loading ? 'Verifying…' : 'Confirm & Sign In'}
+              </button>
+              <p style={{ color: '#ffffff33', fontSize: 12, textAlign: 'center', margin: '4px 0 0' }}>
+                Wrong email?{' '}
+                <span onClick={() => { setView('signup'); setError(''); }} style={{ color: '#4FC3F7', cursor: 'pointer', fontWeight: 700 }}>
+                  Go back
+                </span>
+              </p>
+            </form>
+          )}
+
           {/* Cognito note */}
           {view !== 'account' && (
             <p style={{ color: '#ffffff18', fontSize: 10, textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
               🔒 Authentication powered by AWS Cognito.<br />
-              Real integration pending backend setup.
+              Add your Cognito credentials to .env.local to activate.
             </p>
           )}
         </div>

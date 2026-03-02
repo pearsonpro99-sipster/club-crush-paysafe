@@ -4,16 +4,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStreak } from '@/lib/streak';
 import { getFanScore } from '@/lib/fanScore';
-import { MockUser, getUser } from '@/lib/auth';
+import { MockUser, initAuth } from '@/lib/auth';
 import AuthModal from '@/app/components/AuthModal';
+import NotificationOptIn from '@/app/components/NotificationOptIn';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasVillaFlap?: boolean; hasArsenalFlap?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
+  emoji: string; tagline: string; hasVillaFlap?: boolean; hasArsenalFlap?: boolean;
 }> = {
   arsenal:     { name: 'Arsenal FC',         primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners', hasArsenalFlap: true },
   aston_villa: { name: 'Aston Villa',         primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',  hasVillaFlap: true },
-  tiny_moves:  { name: 'Tiny Moves Run Club', primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts', hasTinyMovesFlap: true, hasTinyMovesSurge: true },
 };
 
 export default function ClientHubPage() {
@@ -30,7 +30,7 @@ export default function ClientHubPage() {
   useEffect(() => {
     setStreak(getStreak());
     setFanScore(getFanScore(clientId));
-    setUser(getUser());
+    initAuth().then(setUser);
   }, [clientId]);
 
   return (
@@ -163,34 +163,6 @@ export default function ClientHubPage() {
           />
         )}
 
-        {/* Tiny Moves Dash - Tiny Moves only */}
-        {client.hasTinyMovesFlap && (
-          <GameCard
-            title="Tiny Moves Run Club Dash"
-            description="Dodge the cones, collect pizzas, and keep running! How far can you go?"
-            emoji="🏃"
-            label="FLAPPY"
-            primary={client.primary}
-            accent={client.secondary}
-            badge="TINY MOVES EXCLUSIVE"
-            onClick={() => router.push('/tiny-moves')}
-          />
-        )}
-
-        {/* 5K Surge - Tiny Moves only */}
-        {client.hasTinyMovesSurge && (
-          <GameCard
-            title="5K Surge"
-            description="React fast when the sprint signal fires! Tap in time to surge ahead."
-            emoji="⚡"
-            label="REACTION"
-            primary={client.primary}
-            accent={client.secondary}
-            badge="TINY MOVES EXCLUSIVE"
-            onClick={() => router.push('/tiny-moves-surge')}
-          />
-        )}
-
         {/* Leaderboard CTA */}
         <div
           onClick={() => router.push('/leaderboard')}
@@ -208,6 +180,8 @@ export default function ClientHubPage() {
           <span style={{ color: '#ffffff30', fontSize: 22 }}>›</span>
         </div>
       </div>
+
+      <NotificationOptIn clubName={client.name} primary={client.primary} />
 
       {showAuth && (
         <AuthModal

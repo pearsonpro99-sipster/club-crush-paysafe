@@ -7,7 +7,6 @@ import { getLeaderboard, getScoreBreakdown, LeaderboardEntry } from '@/lib/fanSc
 const CLUBS = [
   { id: 'arsenal',     name: 'Arsenal',     emoji: '🔴', primary: '#EF0107', prize: 'Emirates Stadium Tour' },
   { id: 'aston_villa', name: 'Aston Villa', emoji: '🟣', primary: '#670E36', prize: 'Watch First-Team Training' },
-  { id: 'tiny_moves',  name: 'Tiny Moves',  emoji: '🏃', primary: '#4FC3F7', prize: 'Free Race Entry + Kit' },
 ];
 
 // Deadline: last day of current month

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dizplai Fan Games — Strategy Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    background: #f0f0f4;
+    color: #1a1a2e;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 24px auto;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.13);
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: linear-gradient(145deg, #05050f 0%, #1a0a0a 60%, #0a051a 100%);
+    padding: 56px 52px 44px;
+    color: #fff;
+  }
+
+  .cover-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 3px;
+    color: #ffffff35; margin-bottom: 52px; text-transform: uppercase;
+  }
+  .cover-eyebrow span { color: #EF0107; }
+
+  .cover-tag {
+    display: inline-block;
+    background: rgba(239,1,7,0.15); border: 1px solid rgba(239,1,7,0.4);
+    border-radius: 20px; padding: 5px 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #EF0107; margin-bottom: 20px;
+  }
+
+  .cover-title {
+    font-size: 42px; font-weight: 900; line-height: 1.08;
+    letter-spacing: -1.5px; margin-bottom: 14px;
+  }
+  .cover-title em { font-style: normal; color: #EF0107; }
+
+  .cover-sub {
+    font-size: 14px; color: #ffffff55; font-weight: 400;
+    max-width: 380px; margin-bottom: 44px; line-height: 1.6;
+  }
+
+  .cover-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 44px; }
+  .cpill {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 5px 14px; font-size: 11px;
+    font-weight: 600; color: #ffffffaa;
+  }
+
+  .cover-meta {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 22px; display: flex; gap: 36px;
+  }
+  .cover-meta-item { font-size: 11px; }
+  .cover-meta-item .label { color: #ffffff30; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .cover-meta-item .val   { color: #ffffffaa; font-weight: 600; }
+
+  /* ── BODY ── */
+  .body { padding: 44px 52px; }
+
+  .section { margin-bottom: 36px; }
+
+  .s-label {
+    font-size: 9px; font-weight: 800; letter-spacing: 3px;
+    text-transform: uppercase; color: #EF0107; margin-bottom: 10px;
+  }
+
+  h2 { font-size: 20px; font-weight: 900; margin-bottom: 12px; color: #09090f; letter-spacing: -0.4px; }
+  h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #09090f; }
+  p  { color: #4a4a5a; margin-bottom: 8px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* ── CARDS ── */
+  .card {
+    border: 1px solid #eaeaf2; border-radius: 12px;
+    padding: 16px 18px; background: #fafafa;
+  }
+  .card-red    { border-color: #EF010720; background: #EF010705; }
+  .card-villa  { border-color: #95003B22; background: #95003B05; }
+  .card-gold   { border-color: #FFD70040; background: #FFD70008; }
+  .card-dark   { background: #09090f; border-color: #09090f; }
+  .card-dark h3 { color: #fff; }
+  .card-dark p  { color: #ffffff65; margin-bottom: 0; }
+
+  .card-icon { font-size: 22px; margin-bottom: 9px; }
+
+  /* ── ARCH BLOCK ── */
+  .arch {
+    background: #09090f; border-radius: 14px; padding: 26px;
+    color: #fff; font-size: 11px;
+  }
+  .arch-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 14px;
+  }
+  .arch-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: stretch; }
+  .arch-box {
+    flex: 1; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 11px 14px; text-align: center;
+  }
+  .arch-box.red    { background: rgba(239,1,7,0.15);    border-color: rgba(239,1,7,0.35); }
+  .arch-box.villa  { background: rgba(149,0,59,0.2);    border-color: rgba(149,0,59,0.4); }
+  .arch-box.gold   { background: rgba(255,215,0,0.12);  border-color: rgba(255,215,0,0.3); }
+  .arch-box.green  { background: rgba(34,120,31,0.15);  border-color: rgba(34,120,31,0.35); }
+  .arch-box .sub   { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 3px; font-weight: 400; }
+  .arch-box strong { display: block; font-weight: 700; font-size: 12px; }
+  .arch-connector  { text-align: center; color: rgba(255,255,255,0.2); font-size: 11px; margin: 4px 0; letter-spacing: 1px; }
+
+  /* ── STACK ── */
+  .stack { display: flex; flex-direction: column; gap: 6px; }
+  .stack-row {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid #eaeaf2; border-radius: 8px;
+    padding: 8px 12px; background: #fafafa;
+  }
+  .stack-row.hi { background: #EF010706; border-color: rgba(239,1,7,0.2); }
+  .stack-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #999; min-width: 78px; }
+  .stack-val { font-weight: 600; color: #1a1a2e; flex: 1; font-size: 11px; }
+  .stag {
+    background: #eaeaf2; border-radius: 4px; padding: 2px 7px;
+    font-size: 9px; font-weight: 700; color: #555; white-space: nowrap;
+  }
+  .stag.g { background: #e6f9ee; color: #1a7a3e; }
+  .stag.r { background: #fde8e8; color: #b00; }
+  .stag.b { background: #e8f0fe; color: #1a44cc; }
+
+  /* ── TIMELINE ── */
+  .tl { display: flex; flex-direction: column; }
+  .tl-item { display: flex; gap: 16px; padding-bottom: 20px; position: relative; }
+  .tl-item:not(:last-child)::after {
+    content: ''; position: absolute; left: 14px; top: 30px; bottom: 0;
+    width: 2px; background: #eaeaf2;
+  }
+  .tl-dot {
+    width: 28px; height: 28px; border-radius: 50%; background: #EF0107;
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900; flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .tl-dot.done { background: #1a7a3e; }
+  .tl-dot.grey { background: #aaa; }
+  .tl-body { flex: 1; padding-top: 3px; }
+  .tl-badge {
+    display: inline-block; font-size: 9px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 5px;
+  }
+  .b-done   { background: #e6f9ee; color: #1a7a3e; }
+  .b-next   { background: #fde8e8; color: #b00; }
+  .b-later  { background: #f0f0f6; color: #777; }
+  .tl-body h3 { font-size: 13px; margin-bottom: 4px; }
+  .tl-body p  { font-size: 11px; color: #666; margin: 0; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th {
+    background: #09090f; color: #fff; font-size: 9px;
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    padding: 8px 12px; text-align: left;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid #f2f2f8; vertical-align: top; }
+  .td-k  { font-weight: 700; color: #09090f; }
+  .td-r  { color: #EF0107; font-weight: 600; }
+  .td-g  { color: #1a7a3e; font-weight: 600; }
+
+  /* ── TAGS ── */
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+  .tag  {
+    background: #f0f0f6; border-radius: 4px;
+    padding: 2px 8px; font-size: 10px; font-weight: 600; color: #555;
+  }
+  .tag.g { background: #e6f9ee; color: #1a7a3e; }
+  .tag.r { background: #fde8e8; color: #b00; }
+  .tag.a { background: #fff4e1; color: #b06000; }
+
+  /* ── GTM BULLETS ── */
+  .gtm-item {
+    border-left: 3px solid #EF0107; padding: 11px 14px;
+    background: #fafafa; border-radius: 0 8px 8px 0; margin-bottom: 9px;
+  }
+  .gtm-item h3 { font-size: 12px; color: #EF0107; margin-bottom: 3px; }
+  .gtm-item p  { font-size: 11px; color: #555; margin: 0; }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 1px solid #eaeaf2; margin: 28px 0; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #09090f; padding: 18px 52px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(255,255,255,0.28); font-size: 10px; letter-spacing: 0.5px;
+  }
+  .footer strong { color: rgba(255,255,255,0.6); }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; }
+    @page { size: A4; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ PAGE 1 — COVER + WHAT WE'VE BUILT ════════════ -->
+<div class="page">
+
+  <div class="cover">
+    <div class="cover-eyebrow">DIZPLAI<span>.</span> &nbsp;·&nbsp; Innovation Lab</div>
+
+    <div class="cover-tag">Strategy Overview · Confidential</div>
+
+    <div class="cover-title">
+      Fan Games<br><em>Platform</em>
+    </div>
+
+    <div class="cover-sub">
+      A second-screen fan engagement suite — club-branded games, coin economy, leaderboards and daily streaks — embedded as a widget inside each club's Dizplai web app.
+    </div>
+
+    <div class="cover-pills">
+      <div class="cpill">💎 Club Crush</div>
+      <div class="cpill">🥽 McGinn's Goggle Dash</div>
+      <div class="cpill">🦖 Gunners Flap</div>
+      <div class="cpill">🏆 Fan Leaderboard</div>
+      <div class="cpill">🪙 Coin Economy</div>
+      <div class="cpill">🔥 Daily Streaks</div>
+    </div>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Status</div>
+        <div class="val">Auth Built · Widget Foundation Ready</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Tech</div>
+        <div class="val">Next.js 14 · Phaser 3 · AWS Amplify v6</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Target Platform</div>
+        <div class="val">Dizplai Mythos (Nuxt 3)</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Prepared For</div>
+        <div class="val">Head of Strategy · March 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- WHAT'S BUILT -->
+    <div class="section">
+      <div class="s-label">01 · POC Deliverable</div>
+      <h2>What's Live Today</h2>
+      <p>A fully working proof of concept demonstrating the complete fan experience — from game play to coin spending to leaderboard competition — across two Dizplai clients.</p>
+
+      <div class="grid-2" style="margin-top:14px; margin-bottom:14px">
+
+        <div class="card card-villa">
+          <div class="card-icon">🟣</div>
+          <h3>Aston Villa FC</h3>
+          <p>Club Crush match-3 puzzle (progressive difficulty, 22 moves → harder each level) plus McGinn's Goggle Dash — John McGinn flies through Villa Park collecting 🪙 coins, 🥽 goggles and ⚽ footballs for bonus points.</p>
+          <div class="tags">
+            <span class="tag g">2 games</span>
+            <span class="tag">Villa Park background</span>
+            <span class="tag">Collectibles</span>
+          </div>
+        </div>
+
+        <div class="card card-red">
+          <div class="card-icon">🔴</div>
+          <h3>Arsenal FC</h3>
+          <p>Club Crush plus Gunners Flap — fans pick their playable character from 4 options: Gunnersaurus Rex, Bukayo Saka, Martin Ødegaard, or Thierry Henry. Each drawn as a unique Phaser character. Emirates Stadium backdrop.</p>
+          <div class="tags">
+            <span class="tag g">2 games</span>
+            <span class="tag">4 characters</span>
+            <span class="tag">Collectibles</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Core Platform Features</h3>
+          <div class="tags">
+            <span class="tag g">Progressive difficulty (levels 1–∞)</span>
+            <span class="tag g">Fan Score Leaderboard</span>
+            <span class="tag g">Monthly prize draws</span>
+            <span class="tag g">Daily Streaks 🔥</span>
+            <span class="tag g">Coin economy (150 coins on signup)</span>
+            <span class="tag g">Paywall / extra move packs</span>
+            <span class="tag g">Skip level mechanic</span>
+            <span class="tag g">Leaderboard boost (pay to rank)</span>
+            <span class="tag g">AWS Amplify v6 auth client ✓</span>
+            <span class="tag g">Cognito signUp + email verify flow ✓</span>
+            <span class="tag g">Authenticated API fetch wrapper ✓</span>
+            <span class="tag g">FanGamesWidget.vue foundation ✓</span>
+            <span class="tag g">PWA — installs to home screen</span>
+          </div>
+        </div>
+        <div class="card card-gold">
+          <h3>Remaining to Production</h3>
+          <div class="tags">
+            <span class="tag a">Cognito User Pool + .env.local config</span>
+            <span class="tag r">Score API + DynamoDB backend</span>
+            <span class="tag r">Stripe / Paysafe payments</span>
+            <span class="tag r">Push notifications</span>
+            <span class="tag a">Mythos widget wiring + config panel</span>
+            <span class="tag r">Datadog analytics</span>
+            <span class="tag r">Club admin dashboard</span>
+            <span class="tag r">Per-client white-label config</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- ARCHITECTURE -->
+    <div class="section">
+      <div class="s-label">02 · Architecture</div>
+      <h2>One Widget. One Web App Per Client.</h2>
+      <p>The Fan Games suite runs as a standalone PWA embedded as a widget inside each club's dedicated Dizplai Mythos web app. No shared infrastructure between clubs — each has full isolation.</p>
+
+      <div class="arch" style="margin-top:14px; margin-bottom:16px">
+        <div class="arch-label">Target Production Architecture</div>
+
+        <div class="arch-row">
+          <div class="arch-box villa">
+            <strong>Aston Villa</strong>
+            <div class="sub">avfc.mythos.dizplai.com</div>
+          </div>
+          <div class="arch-box red">
+            <strong>Arsenal FC</strong>
+            <div class="sub">arsenal.mythos.dizplai.com</div>
+          </div>
+          <div class="arch-box" style="opacity:0.5">
+            <strong>Next Client</strong>
+            <div class="sub">client.mythos.dizplai.com</div>
+          </div>
+        </div>
+
+        <div class="arch-connector">↓ &nbsp; Each club = its own Dizplai Mythos web app instance &nbsp; ↓</div>
+
+        <div class="arch-row">
+          <div class="arch-box gold" style="flex:2">
+            <strong>Dizplai Mythos Frontend &nbsp;(Nuxt 3 · Vue 3)</strong>
+            <div class="sub">@dizplai/webapps-ui · nuxt-oidc-auth · Pinia · Tailwind v4 · Docker · AWS ECS</div>
+          </div>
+          <div class="arch-box green" style="flex:1">
+            <strong>Fan Games Widget</strong>
+            <div class="sub">&lt;FanGamesWidget /&gt; · iframe + postMessage auth bridge</div>
+          </div>
+        </div>
+
+        <div class="arch-connector">↓ &nbsp; Shared backend services &nbsp; ↓</div>
+
+        <div class="arch-row">
+          <div class="arch-box"><strong>AWS Cognito</strong><div class="sub">Auth · JWT</div></div>
+          <div class="arch-box"><strong>Dizplai API</strong><div class="sub">Scores · Users · Events</div></div>
+          <div class="arch-box"><strong>Stripe / Paysafe</strong><div class="sub">Coin purchases</div></div>
+          <div class="arch-box"><strong>Datadog RUM</strong><div class="sub">Analytics · Sessions</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="margin-bottom:8px">How the Widget Embeds</h3>
+          <div class="stack">
+            <div class="stack-row hi">
+              <div class="stack-lbl">Vue component</div>
+              <div class="stack-val">&lt;FanGamesWidget clubId="aston_villa" /&gt;</div>
+              <div class="stag b">Mythos</div>
+            </div>
+            <div class="stack-row hi">
+              <div class="stack-lbl">Auth bridge</div>
+              <div class="stack-val">OIDC token → postMessage → iframe</div>
+              <div class="stag g">Cognito</div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-lbl">Events out</div>
+              <div class="stack-val">score, coinSpend, levelComplete → Pinia store</div>
+              <div class="stag">Real-time</div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-lbl">Theme</div>
+              <div class="stack-val">Club colours + branding passed as config props</div>
+              <div class="stag">Auto</div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-lbl">Deploy</div>
+              <div class="stack-val">Games app on AWS ECS · Bitbucket Pipelines · Docker</div>
+              <div class="stag g">Same infra</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:8px">Why This Architecture</h3>
+          <div class="gtm-item" style="margin-bottom:8px">
+            <h3>Complete club isolation</h3>
+            <p>Villa fans never see Arsenal branding. Each instance is fully independently themed and deployed.</p>
+          </div>
+          <div class="gtm-item" style="margin-bottom:8px">
+            <h3>Reuses existing Mythos infrastructure</h3>
+            <p>Same Bitbucket pipeline, same Docker/ECS setup, same auth layer already in the Mythos platform.</p>
+          </div>
+          <div class="gtm-item">
+            <h3>Games stay as Next.js + Phaser</h3>
+            <p>Phaser 3 (canvas-based) doesn't SSR. Keeping games as a standalone Next.js PWA embedded via iframe is the correct technical approach — no rewrite required.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div><strong>DIZPLAI</strong> · Fan Games Platform</div>
+    <div>CONFIDENTIAL · Innovation Lab · March 2026</div>
+    <div>1 / 2</div>
+  </div>
+</div>
+
+
+<!-- ════════════ PAGE 2 — ROADMAP + GTM ════════════ -->
+<div class="page">
+
+  <div class="cover" style="padding: 38px 52px 30px">
+    <div class="cover-eyebrow">DIZPLAI<span>.</span> &nbsp;·&nbsp; Fan Games Platform</div>
+    <div class="cover-tag">Roadmap &amp; Go-to-Market</div>
+    <div class="cover-title" style="font-size:30px">From POC to <em>Product</em></div>
+    <div class="cover-sub" style="margin-bottom:0">Revenue model, delivery phases and how we take this to market.</div>
+  </div>
+
+  <div class="body">
+
+    <!-- ROADMAP -->
+    <div class="section">
+      <div class="s-label">03 · Delivery Roadmap</div>
+      <h2>Five Phases to Production</h2>
+
+      <div class="tl">
+
+        <div class="tl-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-body">
+            <div class="tl-badge b-done">Complete</div>
+            <h3>Phase 1 — POC</h3>
+            <p>Full fan experience across Aston Villa and Arsenal. Club Crush, flappy bird variants, collectibles, coin economy, leaderboard, streaks, mock auth, PWA. Deployed to Vercel.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#e08000">⚡</div>
+          <div class="tl-body">
+            <div class="tl-badge" style="background:#fff4e1;color:#b06000">In Progress · Auth Client Built</div>
+            <h3>Phase 2 — Real Auth + Score API</h3>
+            <p><strong>Done:</strong> AWS Amplify v6 installed. Full auth client built — signIn, signUp, email verification (6-digit code), signOut, deleteUser, authenticated fetch wrapper. AuthModal updated with async handlers and verify step. <strong>Remaining:</strong> AWS Cognito User Pool setup, <code>.env.local</code> credentials, score and leaderboard REST API (Lambda + DynamoDB).</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#e08000">⚡</div>
+          <div class="tl-body">
+            <div class="tl-badge" style="background:#fff4e1;color:#b06000">Started · Widget Foundation Built</div>
+            <h3>Phase 3 — Mythos Widget Integration</h3>
+            <p><strong>Done:</strong> <code>&lt;FanGamesWidget&gt;</code> Vue component created in <code>layers/webapps/components/widget/</code>. postMessage auth bridge implemented — on iframe load, OIDC access token is forwarded to Fan Games. <code>WidgetTypeWithCard.FanGames</code> added to widget type enum. <strong>Remaining:</strong> Mythos engineers to wire into webapp config panel, per-club theme token passing, deploy Villa instance first then Arsenal.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot grey">4</div>
+          <div class="tl-body">
+            <div class="tl-badge b-later">Weeks 6–9</div>
+            <h3>Phase 4 — Payments + Notifications</h3>
+            <p>Stripe Checkout (or Paysafe/Skrill from existing Dizplai discovery) for coin packs. Real IAP: Starter £0.99, Fan Pack £2.49, Season Pass £4.99. Push notification opt-in via Service Worker — daily streak reminders, prize draw results, match-day bonuses.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot grey">5</div>
+          <div class="tl-body">
+            <div class="tl-badge b-later">Weeks 10–16</div>
+            <h3>Phase 5 — Scale + New Clients</h3>
+            <p>Self-serve client onboarding. New game types (live predictor, trivia). Match-day API triggers (live score feeds → game difficulty spikes, bonus rounds). Club admin dashboard. Expand to additional Dizplai sports properties.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- COMMERCIAL -->
+    <div class="section">
+      <div class="s-label">04 · Revenue Model</div>
+      <h2>Three Commercial Streams</h2>
+
+      <div class="grid-3" style="margin-bottom:14px">
+        <div class="card card-dark">
+          <div class="card-icon">🏟️</div>
+          <h3>Platform Licence</h3>
+          <p>Monthly SaaS fee per club. Includes hosting, updates, one custom game skin, leaderboard and basic reporting.</p>
+          <div class="tags" style="margin-top:10px">
+            <span class="tag" style="background:rgba(255,255,255,0.1);color:#ffffffaa">£2,000–£6,000 / mo</span>
+          </div>
+        </div>
+        <div class="card card-dark">
+          <div class="card-icon">🪙</div>
+          <h3>Coin Rev-Share</h3>
+          <p>Clubs white-label coin packs. Dizplai takes 20% of all in-app coin purchases. Club earns 80% — direct revenue from fans, zero effort.</p>
+          <div class="tags" style="margin-top:10px">
+            <span class="tag" style="background:rgba(255,255,255,0.1);color:#ffffffaa">20% of gross IAP</span>
+          </div>
+        </div>
+        <div class="card card-dark">
+          <div class="card-icon">🎯</div>
+          <h3>Sponsored Games</h3>
+          <p>A partner (kit sponsor, bookmaker, beverage brand) funds a bespoke game or in-game campaign. Brand featured throughout.</p>
+          <div class="tags" style="margin-top:10px">
+            <span class="tag" style="background:rgba(255,255,255,0.1);color:#ffffffaa">£5,000–£20,000 / campaign</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-gold">
+        <h3 style="color:#8a6000; margin-bottom:10px">Year 1 Revenue Scenario — 2 Clubs (Aston Villa + Arsenal)</h3>
+        <table>
+          <tr>
+            <th>Revenue Stream</th>
+            <th>Assumption</th>
+            <th>Annual Value</th>
+          </tr>
+          <tr>
+            <td class="td-k">Platform licences × 2 clubs</td>
+            <td>£3,000/mo average</td>
+            <td style="font-weight:800">£72,000</td>
+          </tr>
+          <tr>
+            <td class="td-k">Coin rev-share — Aston Villa</td>
+            <td>1,200 MAU · £2.50 avg spend · 20%</td>
+            <td style="font-weight:800">£7,200</td>
+          </tr>
+          <tr>
+            <td class="td-k">Coin rev-share — Arsenal</td>
+            <td>1,500 MAU · £2.50 avg spend · 20%</td>
+            <td style="font-weight:800">£9,000</td>
+          </tr>
+          <tr>
+            <td class="td-k">Sponsored game (1 campaign)</td>
+            <td>Villa kit partner · 3-month activation</td>
+            <td style="font-weight:800">£12,000</td>
+          </tr>
+          <tr style="background:rgba(255,215,0,0.1)">
+            <td class="td-k" colspan="2"><strong>Conservative Year 1 Total</strong></td>
+            <td style="font-weight:900; font-size:15px; color:#8a6000">£100,200</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- WHY CLUBS BUY -->
+    <div class="section">
+      <div class="s-label">05 · Client Proposition</div>
+      <h2>Why Clubs Buy This</h2>
+
+      <div class="grid-2">
+        <div>
+          <div class="gtm-item">
+            <h3>📱 Captures the Second Screen</h3>
+            <p>65% of fans use their phone during matches. Fan Games captures that attention with club-branded content — not a competitor's app.</p>
+          </div>
+          <div class="gtm-item">
+            <h3>🔁 Daily Habit, Not Just Matchday</h3>
+            <p>Streaks and leaderboards drive fans back every single day. Engagement becomes habitual — not just 90 minutes on a Saturday.</p>
+          </div>
+          <div class="gtm-item">
+            <h3>💰 New Revenue With Zero Engineering</h3>
+            <p>Clubs earn 80% of coin purchases. No development cost. No ongoing maintenance. Dizplai handles everything.</p>
+          </div>
+        </div>
+        <div>
+          <div class="gtm-item">
+            <h3>🎨 Genuinely Club-Branded</h3>
+            <p>McGinn's goggles. Gunnersaurus. Club colours, chants, stadium backdrops. Fans feel it — this isn't generic gamification dropped into a white-label shell.</p>
+          </div>
+          <div class="gtm-item">
+            <h3>📊 First-Party Fan Data</h3>
+            <p>Every session builds a rich fan profile — game preferences, spending, session times. Clubs own this data for commercial partnerships and sponsorship proposals.</p>
+          </div>
+          <div class="gtm-item">
+            <h3>⚡ Live in Weeks, Not Months</h3>
+            <p>The POC is already built. Aston Villa could be live in production within 6–8 weeks of a signed agreement. No long procurement cycles needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMMEDIATE NEXT STEPS -->
+    <div class="section" style="margin-bottom:0">
+      <div class="s-label">06 · Immediate Actions</div>
+      <h2>Next Steps</h2>
+      <div class="grid-2">
+        <div class="stack">
+          <div class="stack-row hi">
+            <div class="stack-lbl">Demo</div>
+            <div class="stack-val">Share POC link with Aston Villa digital / commercial team</div>
+            <div class="stag r">Now</div>
+          </div>
+          <div class="stack-row hi">
+            <div class="stack-lbl">Pricing</div>
+            <div class="stack-val">Confirm licence tier and rev-share terms for proposal</div>
+            <div class="stag r">This week</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-lbl">Sponsor</div>
+            <div class="stack-val">Identify Villa kit partner / sponsor for first paid campaign</div>
+            <div class="stag">Week 2</div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="stack-row hi">
+            <div class="stack-lbl">Engineering</div>
+            <div class="stack-val">Set up Cognito User Pool + App Client, add .env.local credentials</div>
+            <div class="stag r">This week</div>
+          </div>
+          <div class="stack-row hi">
+            <div class="stack-lbl">Backend</div>
+            <div class="stack-val">Score API (Lambda + DynamoDB) — auth client is ready to connect</div>
+            <div class="stag r">This week</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-lbl">Mythos eng</div>
+            <div class="stack-val">Wire FanGamesWidget into Mythos webapp config panel</div>
+            <div class="stag">Week 2–3</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-lbl">Arsenal</div>
+            <div class="stack-val">Gunners Flap + Club Crush demo to Arsenal digital team</div>
+            <div class="stag">Week 2–3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div><strong>DIZPLAI</strong> · Fan Games Platform</div>
+    <div>CONFIDENTIAL · Innovation Lab · March 2026</div>
+    <div>2 / 2</div>
+  </div>
+</div>
+
+</body>
+</html>

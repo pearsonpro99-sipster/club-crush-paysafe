@@ -49,16 +49,11 @@ const MOCK_NAMES: Record<string, string[]> = {
     'HolteEnder', 'VillaVince', 'McGinnMad', 'Claret&Blue', 'VillanKev',
     'TrinidadVilla', 'VillaSteve', 'DouglasLuiz', 'B6Fan', 'WatkinsMark',
   ],
-  tiny_moves: [
-    'RunnerSam', 'PizzaRunner', 'TinyMover1', 'CoachKatie', 'Mileage_Max',
-    'FiveKFiona', 'SundayRun', 'ParkrunPaul', 'ZoneTwo_Zoe', 'CadenceKing',
-  ],
 };
 
 const BASE_SCORES: Record<string, number[]> = {
   arsenal:     [48200, 41500, 36000, 29800, 24100, 19500, 15800, 11200, 7400, 3900],
   aston_villa: [52000, 44000, 37500, 31000, 25500, 20000, 15000, 10500, 6800, 3200],
-  tiny_moves:  [38000, 32000, 27000, 22000, 17500, 13500, 10000, 7000, 4500, 2200],
 };
 
 export interface LeaderboardEntry {
