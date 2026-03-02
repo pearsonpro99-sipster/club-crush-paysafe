@@ -6,8 +6,8 @@ import ServiceWorkerInit from '@/app/components/ServiceWorkerInit';
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
-  title: 'Dizplai Fan Games',
-  description: 'Sports fan games — Club Crush, Flappy Bird & more. Earn points, climb the leaderboard, win prizes.',
+  title: 'VolleyVerse Fan Games',
+  description: 'VolleyVerse Fan Games — Volleyball Match-3, Volley Flapper & Serve Ace. Earn points, climb the leaderboard, win prizes.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,10 +15,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0a0a0f" />
+        <meta name="theme-color" content="#220C2D" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Fan Games" />
+        <meta name="apple-mobile-web-app-title" content="VolleyVerse" />
         <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         {GA_ID && (

@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getLeaderboard, getScoreBreakdown, LeaderboardEntry } from '@/lib/fanScore';
 
 const CLUBS = [
-  { id: 'arsenal',     name: 'Arsenal',     emoji: '🔴', primary: '#EF0107', prize: 'Emirates Stadium Tour' },
-  { id: 'aston_villa', name: 'Aston Villa', emoji: '🟣', primary: '#670E36', prize: 'Watch First-Team Training' },
+  { id: 'volleyverse', name: 'VolleyVerse', emoji: '🏐', primary: '#8E11FF', prize: 'VIP VolleyVerse Meet & Greet' },
 ];
 
 // Deadline: last day of current month
@@ -32,19 +31,20 @@ export default function LeaderboardPage() {
   const top10    = entries.slice(0, 10);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#220C2D', fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
 
       {/* Header */}
-      <div style={{ background: '#111118', borderBottom: '1px solid #ffffff10', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ background: '#1a0822', borderBottom: '1px solid #8E11FF30', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <button onClick={() => router.back()} style={{ background: 'transparent', border: 'none', color: '#ffffff50', fontSize: 20, cursor: 'pointer', padding: 0, lineHeight: 1 }}>←</button>
         <div style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>🏆 Fan Leaderboard</div>
+        <div style={{ marginLeft: 'auto', color: '#C385F9', fontSize: 12, fontWeight: 700 }}>VolleyVerse</div>
       </div>
 
       {/* Monthly prize banner */}
       <div style={{
         margin: '16px 16px 0',
-        background: `linear-gradient(135deg, ${club.primary}44 0%, ${club.primary}22 100%)`,
-        border: `1px solid ${club.primary}55`,
+        background: 'linear-gradient(135deg, #8E11FF33 0%, #630CB322 100%)',
+        border: '1px solid #8E11FF55',
         borderRadius: 16, padding: '14px 16px',
       }}>
         <p style={{ color: '#ffffff60', fontSize: 9, letterSpacing: 3, textTransform: 'uppercase', margin: '0 0 4px' }}>Monthly Competition</p>
@@ -52,22 +52,22 @@ export default function LeaderboardPage() {
         <p style={{ color: '#ffffff55', fontSize: 11, margin: 0 }}>Top fan wins · Deadline: {getDeadline()}</p>
       </div>
 
-      {/* Club tabs */}
-      <div style={{ display: 'flex', gap: 8, padding: '14px 16px 8px' }}>
-        {CLUBS.map(c => (
-          <button
-            key={c.id}
-            onClick={() => setActiveClub(c.id)}
-            style={{
-              flex: 1, padding: '8px 4px', borderRadius: 10, border: 'none',
-              background: activeClub === c.id ? c.primary : '#ffffff0a',
-              color: activeClub === c.id ? '#fff' : '#ffffff44',
-              fontSize: 11, fontWeight: 800, cursor: 'pointer', letterSpacing: 0.5,
-            }}
-          >
-            {c.emoji} {c.name}
-          </button>
-        ))}
+      {/* How to earn pts strip */}
+      <div style={{ margin: '10px 16px 0', background: '#ffffff06', border: '1px solid #ffffff10', borderRadius: 12, padding: '10px 14px' }}>
+        <p style={{ color: '#ffffff40', fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', margin: '0 0 6px' }}>Earn fan points</p>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
+          {[
+            { label: 'Crush set', pts: '200–800' },
+            { label: 'Volley Flapper', pts: '10–300' },
+            { label: 'Serve Ace', pts: '100–1000' },
+            { label: 'Leaderboard boost', pts: '+800' },
+          ].map(item => (
+            <div key={item.label} style={{ background: '#8E11FF22', borderRadius: 8, padding: '4px 10px' }}>
+              <span style={{ color: '#C385F9', fontSize: 11, fontWeight: 700 }}>{item.label} </span>
+              <span style={{ color: '#DFF86C', fontSize: 11, fontWeight: 900 }}>{item.pts} pts</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Your score card (if played) */}

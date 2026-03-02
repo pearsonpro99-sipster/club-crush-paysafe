@@ -1,15 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { ArsenalFlapperEvent, ArsenalCharacter } from '@/lib/game/ArsenalFlapperScene';
+import { FlapperEvent } from '@/lib/game/VolleyFlapperScene';
 
 interface Props {
-  character: ArsenalCharacter;
-  onEvent: (e: ArsenalFlapperEvent) => void;
+  onEvent: (e: FlapperEvent) => void;
   gameRef: React.MutableRefObject<any>;
 }
 
-export default function ArsenalFlapperGame({ character, onEvent, gameRef }: Props) {
+export default function VolleyFlapperGame({ onEvent, gameRef }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const phaserRef = useRef<any>(null);
 
@@ -19,19 +18,19 @@ export default function ArsenalFlapperGame({ character, onEvent, gameRef }: Prop
 
     const init = async () => {
       const Phaser = (await import('phaser')).default;
-      const { ArsenalFlapperScene } = await import('@/lib/game/ArsenalFlapperScene');
+      const { VolleyFlapperScene } = await import('@/lib/game/VolleyFlapperScene');
 
       const width = Math.min(containerRef.current!.clientWidth, 480);
       const height = Math.floor(width * 1.65);
       containerRef.current!.style.height = `${height}px`;
 
-      (window as any).__arsenalData = { onEvent, character };
+      (window as any).__volleyData = { onEvent };
 
-      const scene = new ArsenalFlapperScene();
+      const scene = new VolleyFlapperScene();
       game = new Phaser.Game({
         type: Phaser.AUTO,
         width, height,
-        backgroundColor: '#0a0505',
+        backgroundColor: '#220C2D',
         parent: containerRef.current!,
         scene,
         scale: { mode: Phaser.Scale.NONE },
@@ -46,14 +45,9 @@ export default function ArsenalFlapperGame({ character, onEvent, gameRef }: Prop
     return () => {
       game?.destroy(true);
       phaserRef.current = null;
-      delete (window as any).__arsenalData;
+      delete (window as any).__volleyData;
     };
   }, []);
 
-  return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', maxWidth: 480, margin: '0 auto', overflow: 'hidden' }}
-    />
-  );
+  return <div ref={containerRef} style={{ width: '100%', maxWidth: 480, margin: '0 auto', overflow: 'hidden' }} />;
 }

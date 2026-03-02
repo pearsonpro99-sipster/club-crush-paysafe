@@ -24,8 +24,8 @@ const saveLevel = (clubId: string, level: number) => {
 function GameContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const clientParam = searchParams.get('client') || 'arsenal';
-  const [selectedClub] = useState<string>(THEMES[clientParam] ? clientParam : 'arsenal');
+  const clientParam = searchParams.get('client') || 'volleyverse';
+  const [selectedClub] = useState<string>(THEMES[clientParam] ? clientParam : 'volleyverse');
   const [gameStarted, setGameStarted] = useState(false);
   const [coins, setCoins] = useState(() => getCoins());
   const [level, setLevel] = useState(1);
@@ -139,16 +139,16 @@ function GameContent() {
             onBuyCoins={() => setShowCoinShop(true)}
           />
 
-          {/* McGinn Goggle Dash — Aston Villa only */}
-          {selectedClub === 'aston_villa' && (
+          {/* Volley Flapper — VolleyVerse */}
+          {selectedClub === 'volleyverse' && (
             <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
               <p style={{ color: '#ffffff40', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 10 }}>Also Available</p>
-              <a href="/villa-runner" style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'linear-gradient(135deg, #95003B 0%, #3d0018 100%)', borderRadius: 16, padding: '16px', border: '2px solid #95BFE5', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <span style={{ fontSize: 40 }}>🥽</span>
+              <a href="/volley-flapper" style={{ textDecoration: 'none' }}>
+                <div style={{ background: 'linear-gradient(135deg, #630CB3 0%, #220C2D 100%)', borderRadius: 16, padding: '16px', border: '2px solid #8E11FF', display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <span style={{ fontSize: 40 }}>🏐</span>
                   <div>
-                    <p style={{ color: '#95BFE5', fontWeight: 900, fontSize: 16, margin: 0 }}>McGinn's Goggle Dash</p>
-                    <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>Aston Villa Flappy Bird</p>
+                    <p style={{ color: '#C385F9', fontWeight: 900, fontSize: 16, margin: 0 }}>Volley Flapper</p>
+                    <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>VolleyVerse Flappy Bird</p>
                   </div>
                   <span style={{ color: '#ffffff44', marginLeft: 'auto', fontSize: 20 }}>▶</span>
                 </div>

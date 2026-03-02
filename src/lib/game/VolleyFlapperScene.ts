@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const VILLA_CLARET  = 0x95003B;
-const VILLA_BLUE    = 0x95BFE5;
-const VILLA_GOLD    = 0xFFD700;
-const VILLA_DARK    = 0x1a0010;
+const VV_VIOLET   = 0x8E11FF;
+const VV_LILAC    = 0xC385F9;
+const VV_DARK     = 0x220C2D;
+const VV_LIME     = 0xDFF86C;
+const VV_DEEP     = 0x630CB3;
 
 const GRAVITY          = 1400;
 const FLAP_VELOCITY    = -530;
@@ -24,6 +25,7 @@ export type FlapperEvent =
 interface Pipe {
   top: Phaser.GameObjects.Graphics;
   bottom: Phaser.GameObjects.Graphics;
+  netBar: Phaser.GameObjects.Graphics;
   scored: boolean;
   x: number;
   gapTopY: number;
@@ -39,9 +41,9 @@ interface Collectible {
   collected: boolean;
 }
 
-export class AstionVillaFlapperScene extends Phaser.Scene {
-  private mcginn!: Phaser.GameObjects.Container;
-  private mcginnBody!: Phaser.GameObjects.Graphics;
+export class VolleyFlapperScene extends Phaser.Scene {
+  private player!: Phaser.GameObjects.Container;
+  private playerBody!: Phaser.GameObjects.Graphics;
   private playerY = 0;
   private playerVY = 0;
   private isDead = false;
@@ -59,11 +61,11 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
   private currentPipeGap   = PIPE_GAP;
 
   constructor() {
-    super({ key: 'AstionVillaFlapperScene' });
+    super({ key: 'VolleyFlapperScene' });
   }
 
   init() {
-    const data = (typeof window !== 'undefined' && (window as any).__villaData) || {};
+    const data = (typeof window !== 'undefined' && (window as any).__volleyData) || {};
     this.onEvent = data.onEvent || (() => {});
     this.score = 0;
     this.isDead = false;
@@ -84,7 +86,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
 
     this.buildBackground();
     this.buildGround();
-    this.buildMcGinn();
+    this.buildPlayer();
     this.buildHUD();
     this.buildTapToStart();
 
@@ -106,133 +108,141 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
   private buildBackground() {
     const { width, height } = this.scale;
 
+    // Deep space gradient sky
     const sky = this.add.graphics();
-    sky.fillGradientStyle(0x1a0010, 0x1a0010, VILLA_CLARET, VILLA_CLARET, 1);
+    sky.fillGradientStyle(VV_DARK, VV_DARK, VV_DEEP, VV_DEEP, 1);
     sky.fillRect(0, 0, width, height * 0.55);
 
+    // Crowd / stands area
     const crowd = this.add.graphics();
-    crowd.fillStyle(0x6B0030, 1);
+    crowd.fillStyle(0x3a0878, 1);
     crowd.fillRect(0, height * 0.1, width, height * 0.28);
 
+    // Crowd dots
     for (let i = 0; i < 120; i++) {
       const cx = Math.random() * width;
       const cy = height * 0.1 + Math.random() * (height * 0.25);
-      crowd.fillStyle(Math.random() > 0.5 ? VILLA_CLARET : VILLA_BLUE, 0.65);
+      crowd.fillStyle(Math.random() > 0.5 ? VV_VIOLET : VV_LILAC, 0.6);
       crowd.fillCircle(cx, cy, 2.5 + Math.random() * 2);
     }
 
-    this.add.text(width * 0.5, height * 0.175, 'UTV', {
-      fontSize: '28px', color: '#FFD700', fontStyle: 'bold',
-    }).setOrigin(0.5).setAlpha(0.38).setDepth(2);
-    this.add.text(width * 0.22, height * 0.27, 'HOLTE\nEND', {
-      fontSize: '11px', color: '#95BFE5', fontStyle: 'bold', align: 'center', lineSpacing: 2,
-    }).setOrigin(0.5).setAlpha(0.32).setDepth(2);
-    this.add.text(width * 0.75, height * 0.20, 'UTV', {
-      fontSize: '13px', color: '#FFD700', fontStyle: 'bold',
+    // Brand text in stands
+    this.add.text(width * 0.5, height * 0.175, 'VOLLEYVERSE', {
+      fontSize: '22px', color: '#DFF86C', fontStyle: 'bold',
+    }).setOrigin(0.5).setAlpha(0.35).setDepth(2);
+    this.add.text(width * 0.22, height * 0.27, 'THE\nVERSE', {
+      fontSize: '10px', color: '#C385F9', fontStyle: 'bold', align: 'center', lineSpacing: 2,
+    }).setOrigin(0.5).setAlpha(0.30).setDepth(2);
+    this.add.text(width * 0.75, height * 0.20, 'VV', {
+      fontSize: '14px', color: '#DFF86C', fontStyle: 'bold',
     }).setOrigin(0.5).setAlpha(0.25).setDepth(2);
-    this.add.text(width * 0.5, height * 0.305, 'HOLTE END', {
-      fontSize: '12px', color: '#95BFE5', fontStyle: 'bold', letterSpacing: 3,
-    }).setOrigin(0.5).setAlpha(0.22).setDepth(2);
 
-    crowd.fillStyle(VILLA_CLARET, 1);
+    // Ad banner
+    crowd.fillStyle(VV_VIOLET, 1);
     crowd.fillRect(0, height * 0.36, width, 10);
     for (let i = 0; i < 4; i++) {
       const adText = this.add.text(
         (i / 4) * width + 10, height * 0.36 + 1,
-        'ASTON VILLA FC',
-        { fontSize: '7px', color: '#95BFE5', fontStyle: 'bold' }
+        'VOLLEYVERSE',
+        { fontSize: '7px', color: '#DFF86C', fontStyle: 'bold' }
       );
       adText.setDepth(2);
     }
 
-    const pitch = this.add.graphics();
-    pitch.fillStyle(0x2d7d2d, 1);
-    pitch.fillRect(0, height * 0.42, width, height * 0.46);
+    // Indoor court floor (light wood-coloured)
+    const court = this.add.graphics();
+    court.fillStyle(0x3a1e00, 1);
+    court.fillRect(0, height * 0.42, width, height * 0.46);
 
+    // Court stripes
     for (let i = 0; i < 7; i++) {
       if (i % 2 === 0) {
-        pitch.fillStyle(0x257a25, 0.45);
-        pitch.fillRect(0, height * 0.42 + i * (height * 0.065), width, height * 0.032);
+        court.fillStyle(0x321800, 0.5);
+        court.fillRect(0, height * 0.42 + i * (height * 0.065), width, height * 0.032);
       }
     }
+
+    // Court lines (white)
+    court.lineStyle(2, 0xFFFFFF, 0.25);
+    court.lineBetween(width * 0.5, height * 0.42, width * 0.5, this.groundY);  // centre line
+    court.strokeRect(width * 0.08, height * 0.44, width * 0.84, this.groundY - height * 0.44 - 4);
   }
 
   private buildGround() {
     const { width, height } = this.scale;
     this.groundGfx = this.add.graphics();
-    this.groundGfx.fillStyle(0x2d6e00, 1);
+    this.groundGfx.fillStyle(0x2a1200, 1);
     this.groundGfx.fillRect(0, this.groundY, width, height - this.groundY);
-    this.groundGfx.lineStyle(3, 0xFFFFFF, 0.7);
+    this.groundGfx.lineStyle(3, 0xFFFFFF, 0.6);
     this.groundGfx.lineBetween(0, this.groundY, width, this.groundY);
 
+    // Baseline dashes
     for (let x = 0; x < width; x += 30) {
-      this.groundGfx.fillStyle(0xFFFFFF, 0.3);
+      this.groundGfx.fillStyle(0xFFFFFF, 0.2);
       this.groundGfx.fillRect(x, this.groundY + 12, 16, 3);
     }
     this.groundGfx.setDepth(6);
   }
 
-  // ─── MCGINN CHARACTER ──────────────────────────────────────────────────────
+  // ─── PLAYER CHARACTER ──────────────────────────────────────────────────────
 
-  private buildMcGinn() {
+  private buildPlayer() {
     const container = this.add.container(PLAYER_X, this.playerY);
     const gfx = this.add.graphics();
-    this.drawMcGinn(gfx);
+    this.drawPlayer(gfx);
     container.add(gfx);
-    this.mcginnBody = gfx;
-    this.mcginn = container;
-    this.mcginn.setDepth(10);
+    this.playerBody = gfx;
+    this.player = container;
+    this.player.setDepth(10);
   }
 
-  private drawMcGinn(g: Phaser.GameObjects.Graphics) {
+  private drawPlayer(g: Phaser.GameObjects.Graphics) {
     g.clear();
 
-    // Body — claret Villa kit
-    g.fillStyle(VILLA_CLARET, 1);
+    // Body — violet VolleyVerse kit
+    g.fillStyle(VV_VIOLET, 1);
     g.fillEllipse(0, 0, 36, 30);
 
-    // Blue shorts
-    g.fillStyle(VILLA_BLUE, 1);
+    // White shorts
+    g.fillStyle(0xFFFFFF, 1);
     g.fillRect(-10, 10, 20, 11);
 
-    // Arms outstretched (flying celebration pose)
-    g.fillStyle(VILLA_CLARET, 1);
+    // Arms outstretched (serving pose)
+    g.fillStyle(VV_VIOLET, 1);
     g.fillRoundedRect(-22, -6, 14, 6, 3);
     g.fillRoundedRect(8, -6, 14, 6, 3);
 
-    // White socks & dark boots
+    // White socks
     g.fillStyle(0xFFFFFF, 1);
     g.fillRect(-10, 20, 8, 10);
     g.fillRect(2, 20, 8, 10);
+    // Dark shoes
     g.fillStyle(0x111111, 1);
     g.fillRoundedRect(-11, 28, 10, 6, 3);
     g.fillRoundedRect(1, 28, 10, 6, 3);
 
-    // Head
+    // Head (skin tone)
     g.fillStyle(0xf4a460, 1);
     g.fillCircle(0, -18, 11);
 
-    // Hair (dark brown)
-    g.fillStyle(0x3a1500, 1);
+    // Hair (dark)
+    g.fillStyle(0x1a0a00, 1);
     g.fillRoundedRect(-11, -29, 22, 13, { tl: 9, tr: 9, bl: 0, br: 0 });
 
-    // ── GOGGLES ── (iconic McGinn Champions League celebration)
-    g.fillStyle(VILLA_GOLD, 0.35);
-    g.fillCircle(-6, -18, 6);
-    g.fillCircle(6, -18, 6);
-    g.lineStyle(3, VILLA_GOLD, 1);
-    g.strokeCircle(-6, -18, 6);
-    g.strokeCircle(6, -18, 6);
-    g.fillStyle(VILLA_GOLD, 1);
-    g.fillRect(-1, -20, 2, 4);
-    g.lineStyle(2, VILLA_GOLD, 0.8);
-    g.lineBetween(-12, -18, -15, -14);
-    g.lineBetween(12, -18, 15, -14);
+    // VV logo hint on chest (small V shape in lime)
+    g.fillStyle(VV_LIME, 0.85);
+    g.fillTriangle(0, -6, -5, -1, 0, 4);
+    g.fillTriangle(0, -6, 5, -1, 0, 4);
 
-    // Villa badge hint — small diamond on chest
-    g.fillStyle(VILLA_GOLD, 0.7);
-    g.fillTriangle(0, -8, -4, -2, 0, 4);
-    g.fillTriangle(0, -8, 4, -2, 0, 4);
+    // Volleyball in right hand
+    g.fillStyle(0xFFFFFF, 0.9);
+    g.fillCircle(20, -5, 8);
+    g.lineStyle(1.5, VV_VIOLET, 0.8);
+    g.strokeCircle(20, -5, 8);
+    // Ball seam lines
+    g.lineStyle(1.5, VV_DEEP, 0.6);
+    g.lineBetween(14, -8, 26, -2);
+    g.lineBetween(14, -2, 26, -8);
   }
 
   // ─── HUD ───────────────────────────────────────────────────────────────────
@@ -240,21 +250,20 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
   private buildHUD() {
     const { width } = this.scale;
     const hud = this.add.graphics();
-    hud.fillStyle(VILLA_CLARET, 0.92);
+    hud.fillStyle(VV_DEEP, 0.92);
     hud.fillRect(0, 0, width, 50);
-    hud.fillStyle(VILLA_BLUE, 1);
+    hud.fillStyle(VV_LIME, 1);
     hud.fillRect(0, 48, width, 2);
     hud.setDepth(20);
 
     this.add.text(12, 8, 'SCORE', { fontSize: '9px', color: '#ffffff88', fontStyle: 'bold', letterSpacing: 2 }).setDepth(21);
     this.scoreText = this.add.text(12, 20, '0', { fontSize: '20px', color: '#ffffff', fontStyle: 'bold' }).setDepth(21);
 
-    // Collectible legend in HUD
-    this.add.text(width - 12, 8, '🪙+1  🥽+2  ⚽+3', {
-      fontSize: '9px', color: '#FFD70088', fontStyle: 'bold',
+    this.add.text(width - 12, 8, '🪙+1  🏐+2  🏆+3', {
+      fontSize: '9px', color: '#DFF86C88', fontStyle: 'bold',
     }).setOrigin(1, 0).setDepth(21);
 
-    this.add.text(width / 2, 14, '🦁 AVF', { fontSize: '13px', color: '#95BFE5', fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(21);
+    this.add.text(width / 2, 14, '🏐 VolleyVerse', { fontSize: '13px', color: '#C385F9', fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(21);
   }
 
   // ─── START SCREEN ──────────────────────────────────────────────────────────
@@ -266,31 +275,30 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     overlay.fillStyle(0x000000, 0.65);
     overlay.fillRect(0, 0, width, height);
 
-    const goggles = this.add.text(width / 2, height * 0.2, '🥽', { fontSize: '72px' }).setOrigin(0.5).setDepth(31);
-    this.tweens.add({ targets: goggles, y: height * 0.2 - 10, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const ball = this.add.text(width / 2, height * 0.2, '🏐', { fontSize: '72px' }).setOrigin(0.5).setDepth(31);
+    this.tweens.add({ targets: ball, y: height * 0.2 - 12, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
-    this.add.text(width / 2, height * 0.38, 'McGinn\'s', { fontSize: '28px', color: '#95BFE5', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
-    this.add.text(width / 2, height * 0.46, 'GOGGLE DASH', { fontSize: '24px', color: '#FFD700', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
-    this.add.text(width / 2, height * 0.53, 'Aston Villa FC', { fontSize: '13px', color: '#ffffff55' }).setOrigin(0.5).setDepth(31);
+    this.add.text(width / 2, height * 0.38, 'Volley', { fontSize: '28px', color: '#C385F9', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
+    this.add.text(width / 2, height * 0.46, 'FLAPPER', { fontSize: '24px', color: '#DFF86C', fontStyle: 'bold' }).setOrigin(0.5).setDepth(31);
+    this.add.text(width / 2, height * 0.53, 'VolleyVerse', { fontSize: '13px', color: '#ffffff55' }).setOrigin(0.5).setDepth(31);
 
-    // Collectibles hint
-    this.add.text(width / 2, height * 0.60, 'Grab 🪙 🥽 ⚽ for bonus points!', {
-      fontSize: '12px', color: '#FFD700', fontStyle: 'bold',
+    this.add.text(width / 2, height * 0.60, 'Grab \uD83E\uDE99 \uD83C\uDFC6 \uD83E\uDEA9 for bonus points!', {
+      fontSize: '12px', color: '#DFF86C', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(31);
 
     const btn = this.add.graphics().setDepth(31);
-    btn.fillStyle(VILLA_CLARET, 1);
+    btn.fillStyle(VV_VIOLET, 1);
     btn.fillRoundedRect(-100, -24, 200, 48, 24);
-    btn.lineStyle(2, VILLA_BLUE, 1);
+    btn.lineStyle(2, VV_LIME, 1);
     btn.strokeRoundedRect(-100, -24, 200, 48, 24);
     btn.setPosition(width / 2, height * 0.72);
 
-    const btnText = this.add.text(width / 2, height * 0.72, '▶  TAP TO FLY', { fontSize: '15px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(32);
+    const btnText = this.add.text(width / 2, height * 0.72, '\u25B6  TAP TO FLY', { fontSize: '15px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(32);
     this.tweens.add({ targets: [btn, btnText], scaleX: 1.05, scaleY: 1.05, duration: 700, yoyo: true, repeat: -1 });
 
     this.add.text(width / 2, height * 0.82, 'TAP anywhere to flap', { fontSize: '11px', color: '#ffffff55' }).setOrigin(0.5).setDepth(31);
 
-    (this as any)._startOverlay = [overlay, goggles, btn, btnText];
+    (this as any)._startOverlay = [overlay, ball, btn, btnText];
     (this as any)._startTexts = this.children.list.filter((c: any) => c.type === 'Text' && c.depth === 31);
   }
 
@@ -305,11 +313,11 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
   private flap() {
     this.playerVY = FLAP_VELOCITY;
     this.tweens.add({
-      targets: this.mcginn, angle: -22,
+      targets: this.player, angle: -22,
       duration: 100,
       onComplete: () => {
         if (!this.isDead) {
-          this.tweens.add({ targets: this.mcginn, angle: 30, duration: 400, ease: 'Quad.easeIn' });
+          this.tweens.add({ targets: this.player, angle: 30, duration: 400, ease: 'Quad.easeIn' });
         }
       },
     });
@@ -318,7 +326,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
   // ─── COLLECTIBLES ──────────────────────────────────────────────────────────
 
   private maybeSpawnCollectible(gapTopY: number, gapBottomY: number, pipeX: number) {
-    if (Math.random() > 0.65) return; // 65% chance
+    if (Math.random() > 0.65) return;
 
     const centerY = (gapTopY + gapBottomY) / 2;
     const roll = Math.random();
@@ -327,26 +335,24 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     let label: string;
 
     if (roll < 0.5) {
-      emoji = '🪙'; bonus = 1; label = '+1';
+      emoji = '\uD83E\uDE99'; bonus = 1; label = '+1';   // 🪙
     } else if (roll < 0.8) {
-      emoji = '🥽'; bonus = 2; label = '+2';
+      emoji = '\uD83C\uDFD0'; bonus = 2; label = '+2';   // 🏐
     } else {
-      emoji = '⚽'; bonus = 3; label = '+3';
+      emoji = '\uD83C\uDFC6'; bonus = 3; label = '+3';   // 🏆
     }
 
     const obj = this.add.text(pipeX + PIPE_WIDTH / 2, centerY, emoji, {
       fontSize: '22px',
     }).setOrigin(0.5).setDepth(9);
 
-    // Gentle floating tween
     this.tweens.add({
       targets: obj, y: centerY - 8,
       duration: 700 + Math.random() * 300,
       yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
-    // Slow spin for coins
-    if (emoji === '🪙') {
+    if (emoji === '\uD83E\uDE99') {
       this.tweens.add({ targets: obj, scaleX: 0.3, duration: 500, yoyo: true, repeat: -1 });
     }
 
@@ -364,10 +370,9 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     this.scoreText.setText(this.score.toString());
     this.onEvent({ type: 'score', score: this.score });
 
-    // Pop animation
-    const popText = c.bonus === 1 ? `🪙 ${c.label}` : c.bonus === 2 ? `🥽 ${c.label}` : `⚽ ${c.label}`;
-    const pop = this.add.text(PLAYER_X + 10, this.playerY - 25, popText, {
-      fontSize: '18px', color: '#FFD700', fontStyle: 'bold',
+    const popLabel = c.bonus === 1 ? `\uD83E\uDE99 ${c.label}` : c.bonus === 2 ? `\uD83C\uDFD0 ${c.label}` : `\uD83C\uDFC6 ${c.label}`;
+    const pop = this.add.text(PLAYER_X + 10, this.playerY - 25, popLabel, {
+      fontSize: '18px', color: '#DFF86C', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(15);
 
     this.tweens.add({
@@ -376,52 +381,77 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
       onComplete: () => pop.destroy(),
     });
 
-    // Flash the score text gold
     this.tweens.add({
       targets: this.scoreText,
       scaleX: 1.4, scaleY: 1.4, duration: 80, yoyo: true,
     });
   }
 
-  // ─── PIPES ─────────────────────────────────────────────────────────────────
+  // ─── NET POSTS (pipes) ─────────────────────────────────────────────────────
 
   private spawnPipe() {
-    const { width, height } = this.scale;
+    const { width } = this.scale;
     const gap = this.currentPipeGap;
     const minGapTop = 80;
     const maxGapTop = this.groundY - gap - 60;
     const gapTopY = Phaser.Math.Between(minGapTop, maxGapTop);
 
+    // Top post
     const top = this.add.graphics();
-    top.fillStyle(VILLA_CLARET, 1);
+    top.fillStyle(VV_DEEP, 1);
     top.fillRect(0, 0, PIPE_WIDTH, gapTopY - 50);
-    top.fillStyle(0x6B0030, 1);
+    // Post cap
+    top.fillStyle(VV_VIOLET, 1);
     top.fillRoundedRect(-6, gapTopY - 66, PIPE_WIDTH + 12, 18, 4);
-    top.lineStyle(2, VILLA_BLUE, 0.6);
+    // Net texture on post
+    top.lineStyle(1.5, VV_LILAC, 0.35);
+    for (let y = 12; y < gapTopY - 52; y += 18) {
+      top.lineBetween(6, y, PIPE_WIDTH - 6, y);
+    }
+    top.lineStyle(2, VV_LILAC, 0.2);
     top.strokeRect(0, 0, PIPE_WIDTH, gapTopY - 50);
     top.setX(width + PIPE_WIDTH);
     top.setDepth(8);
 
     const bottomY = gapTopY + gap;
     const bottom = this.add.graphics();
-    bottom.fillStyle(VILLA_CLARET, 1);
+    bottom.fillStyle(VV_DEEP, 1);
     bottom.fillRect(0, 0, PIPE_WIDTH, this.groundY - bottomY);
-    bottom.fillStyle(0x6B0030, 1);
+    // Post cap
+    bottom.fillStyle(VV_VIOLET, 1);
     bottom.fillRoundedRect(-6, 0, PIPE_WIDTH + 12, 18, 4);
-    bottom.lineStyle(2, VILLA_BLUE, 0.6);
+    // Net texture
+    bottom.lineStyle(1.5, VV_LILAC, 0.35);
+    for (let y = 22; y < this.groundY - bottomY - 4; y += 18) {
+      bottom.lineBetween(6, y, PIPE_WIDTH - 6, y);
+    }
+    bottom.lineStyle(2, VV_LILAC, 0.2);
     bottom.strokeRect(0, 0, PIPE_WIDTH, this.groundY - bottomY);
     bottom.setX(width + PIPE_WIDTH);
     bottom.setY(bottomY);
     bottom.setDepth(8);
 
+    // Volleyball net in the gap (white band)
+    const netBar = this.add.graphics();
+    netBar.fillStyle(0xFFFFFF, 0.85);
+    netBar.fillRect(0, 0, PIPE_WIDTH, 4);
+    // Net diamond pattern
+    netBar.lineStyle(1, 0xdddddd, 0.5);
+    for (let nx = 0; nx < PIPE_WIDTH; nx += 6) {
+      netBar.lineBetween(nx, 0, nx + 3, 3);
+      netBar.lineBetween(nx + 3, 0, nx, 3);
+    }
+    netBar.setX(width + PIPE_WIDTH);
+    netBar.setY(gapTopY - 50 + (gap / 2) - 2);
+    netBar.setDepth(9);
+
     this.pipes.push({
-      top, bottom, scored: false,
+      top, bottom, netBar, scored: false,
       x: width + PIPE_WIDTH,
       gapTopY: gapTopY - 50,
       gapBottomY: bottomY,
     });
 
-    // Maybe spawn a collectible in the gap
     this.maybeSpawnCollectible(gapTopY - 50, bottomY, width + PIPE_WIDTH);
   }
 
@@ -429,7 +459,6 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     if (this.isDead) return;
     this.isDead = true;
 
-    // Clean up all collectibles
     this.collectibles.forEach(c => {
       if (!c.collected) {
         this.tweens.killTweensOf(c.obj);
@@ -439,7 +468,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     this.collectibles = [];
 
     this.tweens.add({
-      targets: this.mcginn, y: this.mcginn.y + 80, angle: 90, alpha: 0,
+      targets: this.player, y: this.player.y + 80, angle: 90, alpha: 0,
       duration: 500, ease: 'Quad.easeIn',
       onComplete: () => this.onEvent({ type: 'died', score: this.score }),
     });
@@ -455,15 +484,12 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
     this.currentPipeSpeed = Math.min(PIPE_SPEED + this.score * 3, PIPE_SPEED_MAX);
     this.currentPipeGap   = Math.max(PIPE_GAP   - this.score * 2.5, PIPE_GAP_MIN);
 
-    // Gravity
     this.playerVY += GRAVITY * dt;
     this.playerY += this.playerVY * dt;
-    this.mcginn.y = this.playerY;
+    this.player.y = this.playerY;
 
-    // Scroll ground
     this.groundOffset = (this.groundOffset + this.currentPipeSpeed * dt) % 30;
 
-    // Pipe timer
     this.pipeTimer -= delta;
     if (this.pipeTimer <= 0) {
       this.spawnPipe();
@@ -475,6 +501,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
       pipe.x -= this.currentPipeSpeed * dt;
       pipe.top.setX(pipe.x);
       pipe.bottom.setX(pipe.x);
+      pipe.netBar.setX(pipe.x);
 
       if (!pipe.scored && pipe.x + PIPE_WIDTH < PLAYER_X) {
         pipe.scored = true;
@@ -483,7 +510,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
         this.onEvent({ type: 'score', score: this.score });
 
         const pop = this.add.text(PLAYER_X + 20, this.playerY - 30, '+1', {
-          fontSize: '20px', color: '#FFD700', fontStyle: 'bold',
+          fontSize: '20px', color: '#DFF86C', fontStyle: 'bold',
         }).setDepth(15);
         this.tweens.add({ targets: pop, y: pop.y - 40, alpha: 0, duration: 600, onComplete: () => pop.destroy() });
       }
@@ -491,20 +518,20 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
       if (pipe.x < -PIPE_WIDTH - 20) {
         pipe.top.destroy();
         pipe.bottom.destroy();
+        pipe.netBar.destroy();
         return false;
       }
       return true;
     });
 
-    // Move collectibles + check collection
-    const pr = 20; // collect radius
+    // Move collectibles + collect
+    const pr = 20;
     this.collectibles = this.collectibles.filter(c => {
       if (c.collected) return false;
 
       c.x -= this.currentPipeSpeed * dt;
       c.obj.setX(c.x);
 
-      // Distance check to player
       const dx = PLAYER_X - c.x;
       const dy = this.playerY - c.y;
       if (Math.sqrt(dx * dx + dy * dy) < pr) {
@@ -521,7 +548,7 @@ export class AstionVillaFlapperScene extends Phaser.Scene {
       return true;
     });
 
-    // Collisions — simplified AABB check
+    // Collision detection
     const px = PLAYER_X;
     const py = this.playerY;
     const collR = 13;
