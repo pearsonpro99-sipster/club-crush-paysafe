@@ -6,6 +6,7 @@ import { getStreak } from '@/lib/streak';
 import { getFanScore } from '@/lib/fanScore';
 import { getCoins } from '@/lib/coins';
 import { MockUser, initAuth } from '@/lib/auth';
+import { triggerTestNotification, notificationPermission } from '@/lib/notifications';
 import AuthModal from '@/app/components/AuthModal';
 import NotificationOptIn from '@/app/components/NotificationOptIn';
 import CoinShopModal from '@/app/game/CoinShopModal';
@@ -30,11 +31,14 @@ export default function ClientHubPage() {
   const [user, setUser]             = useState<MockUser | null>(null);
   const [showAuth, setShowAuth]     = useState(false);
   const [showCoinShop, setShowCoinShop] = useState(false);
+  const [notifGranted, setNotifGranted] = useState(false);
+  const [testFired, setTestFired]   = useState(false);
 
   useEffect(() => {
     setStreak(getStreak());
     setFanScore(getFanScore(clientId));
     setCoins(getCoins());
+    setNotifGranted(notificationPermission() === 'granted');
     initAuth().then(setUser);
   }, [clientId]);
 
@@ -186,6 +190,29 @@ export default function ClientHubPage() {
           <span style={{ color: '#ffffff30', fontSize: 22 }}>›</span>
         </div>
       </div>
+
+      {/* Demo test notification trigger — visible only when permission granted */}
+      {notifGranted && (
+        <div style={{ padding: '0 16px 24px', textAlign: 'center' }}>
+          <button
+            onClick={() => {
+              triggerTestNotification(client.name);
+              setTestFired(true);
+              setTimeout(() => setTestFired(false), 6000);
+            }}
+            style={{
+              background: 'transparent',
+              border: '1px solid #ffffff15',
+              borderRadius: 20, padding: '6px 16px',
+              color: testFired ? '#FFD700' : '#ffffff33',
+              fontSize: 11, cursor: 'pointer',
+              transition: 'color 0.3s',
+            }}
+          >
+            {testFired ? '🔔 Incoming in ~5s…' : '🔔 Test notification'}
+          </button>
+        </div>
+      )}
 
       <NotificationOptIn clubName={client.name} primary={client.primary} />
 

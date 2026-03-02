@@ -75,7 +75,7 @@ self.addEventListener('message', (event) => {
     return;
   }
 
-  // TEST_NOTIFICATION: fires in 2 seconds so the user can see it immediately
+  // TEST_NOTIFICATION: fires in 5 seconds — enough time to start screen recording
   if (type === 'TEST_NOTIFICATION') {
     const { streakCount, clubName } = event.data;
     setTimeout(() => {
@@ -93,6 +93,6 @@ self.addEventListener('message', (event) => {
           { action: 'dismiss', title: 'Later' },
         ],
       });
-    }, 2000);
+    }, 5000);
   }
 });
