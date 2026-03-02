@@ -250,7 +250,7 @@
     <div class="cover-meta">
       <div class="cover-meta-item">
         <div class="label">Status</div>
-        <div class="val">Auth Built · PWA Live · Analytics &amp; Notifications On</div>
+        <div class="val">Auth Built · Stripe Checkout Live · PWA + Analytics + Notifications</div>
       </div>
       <div class="cover-meta-item">
         <div class="label">Tech</div>
@@ -322,6 +322,8 @@
             <span class="tag g">Dizplai logo on PWA home-screen icon ✓</span>
             <span class="tag g">Push notifications — SW + opt-in (8:15, 12:00, 19:00) ✓</span>
             <span class="tag g">GA4 analytics — G-DG3K8SS6FC ✓</span>
+            <span class="tag g">Stripe Checkout — coin top-up (Starter/Fan/Season) ✓</span>
+            <span class="tag g">Persistent coin balance (localStorage) ✓</span>
           </div>
         </div>
         <div class="card card-gold">
@@ -329,7 +331,7 @@
           <div class="tags">
             <span class="tag a">Cognito User Pool + .env.local config (eng task)</span>
             <span class="tag r">Score API + DynamoDB backend</span>
-            <span class="tag r">Stripe / Paysafe payments</span>
+            <span class="tag r">Stripe live keys + webhook (payment verification)</span>
             <span class="tag r">Web Push server (VAPID — currently local SW only)</span>
             <span class="tag a">Mythos widget wiring + config panel</span>
             <span class="tag r">Club admin dashboard</span>
@@ -497,9 +499,9 @@
         <div class="tl-item">
           <div class="tl-dot" style="background:#e08000">⚡</div>
           <div class="tl-body">
-            <div class="tl-badge" style="background:#fff4e1;color:#b06000">Partial · Notifications Live</div>
+            <div class="tl-badge" style="background:#fff4e1;color:#b06000">In Progress · Stripe Checkout Live</div>
             <h3>Phase 4 — Payments + Notifications</h3>
-            <p><strong>Done:</strong> Service Worker registered, local push notifications via SW postMessage — daily streak reminders at 8:15, 12:00 and 19:00. Opt-in banner with Enable / Not now. Test trigger fires in 2s. GA4 analytics wired (G-T622315MPC) — sign-up, login, notification opt-in events tracked. <strong>Remaining:</strong> Stripe Checkout (or Paysafe/Skrill) for coin packs — Starter £0.99, Fan Pack £2.49, Season Pass £4.99. VAPID server-push for re-engagement when app is closed.</p>
+            <p><strong>Done:</strong> Stripe Checkout integrated — Starter Pack (500 coins / £0.99), Fan Pack (1,500 coins / £2.49), Season Pass (5,000 coins / £4.99). Server-side checkout session creation (<code>/api/checkout</code>), payment verification (<code>/api/checkout/verify</code>), idempotent coin crediting on success page. Coins persist across sessions via localStorage. Coin button in hub and CoinShopModal in game both trigger live Stripe checkout. Push notifications at 8:15, 12:00, 19:00. GA4 analytics (G-DG3K8SS6FC). <strong>Remaining:</strong> Swap test keys → live keys before launch. Add Stripe webhook for server-side verification fallback. VAPID server-push for closed-app re-engagement.</p>
           </div>
         </div>
 

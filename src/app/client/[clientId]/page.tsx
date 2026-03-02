@@ -4,9 +4,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStreak } from '@/lib/streak';
 import { getFanScore } from '@/lib/fanScore';
+import { getCoins } from '@/lib/coins';
 import { MockUser, initAuth } from '@/lib/auth';
 import AuthModal from '@/app/components/AuthModal';
 import NotificationOptIn from '@/app/components/NotificationOptIn';
+import CoinShopModal from '@/app/game/CoinShopModal';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
@@ -22,14 +24,17 @@ export default function ClientHubPage() {
   const clientId = params.clientId as string;
   const client = CLIENT_DATA[clientId] || { name: clientId, primary: '#666', secondary: '#fff', bg: '#111', emoji: '🎮', tagline: '' };
 
-  const [streak, setStreak]     = useState(0);
-  const [fanScore, setFanScore] = useState(0);
-  const [user, setUser]         = useState<MockUser | null>(null);
-  const [showAuth, setShowAuth] = useState(false);
+  const [streak, setStreak]         = useState(0);
+  const [fanScore, setFanScore]     = useState(0);
+  const [coins, setCoins]           = useState(0);
+  const [user, setUser]             = useState<MockUser | null>(null);
+  const [showAuth, setShowAuth]     = useState(false);
+  const [showCoinShop, setShowCoinShop] = useState(false);
 
   useEffect(() => {
     setStreak(getStreak());
     setFanScore(getFanScore(clientId));
+    setCoins(getCoins());
     initAuth().then(setUser);
   }, [clientId]);
 
@@ -41,16 +46,17 @@ export default function ClientHubPage() {
         background: client.primary, padding: '12px 16px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: 20, padding: '6px 12px',
-          color: '#FFD700', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 12V22H4a2 2 0 0 1-2-2V6a2 2 0 0 0 2 2h16v4z"/><path d="M22 12H18a2 2 0 0 0 0 4h4"/>
-          </svg>
-          <span>🪙 200</span>
+        <button
+          onClick={() => setShowCoinShop(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 20, padding: '6px 12px',
+            color: '#FFD700', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+          }}
+        >
+          <span>🪙 {coins}</span>
+          <span style={{ color: '#FFD70099', fontSize: 11, fontWeight: 900 }}>＋</span>
         </button>
 
         <div style={{ color: '#fff', fontWeight: 900, fontSize: 15, letterSpacing: 0.5 }}>
@@ -182,6 +188,13 @@ export default function ClientHubPage() {
       </div>
 
       <NotificationOptIn clubName={client.name} primary={client.primary} />
+
+      {showCoinShop && (
+        <CoinShopModal
+          onClose={() => setShowCoinShop(false)}
+          clientId={clientId}
+        />
+      )}
 
       {showAuth && (
         <AuthModal

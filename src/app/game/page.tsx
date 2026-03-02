@@ -8,6 +8,7 @@ import LevelComplete from './LevelComplete';
 import CoinShopModal from './CoinShopModal';
 import { recordScore } from '@/lib/fanScore';
 import { touchStreak } from '@/lib/streak';
+import { getCoins, addCoins, spendCoins } from '@/lib/coins';
 
 const PhaserGame = dynamic(() => import('./PhaserGame'), { ssr: false });
 
@@ -26,7 +27,7 @@ function GameContent() {
   const clientParam = searchParams.get('client') || 'arsenal';
   const [selectedClub] = useState<string>(THEMES[clientParam] ? clientParam : 'arsenal');
   const [gameStarted, setGameStarted] = useState(false);
-  const [coins, setCoins] = useState(150);
+  const [coins, setCoins] = useState(() => getCoins());
   const [level, setLevel] = useState(1);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showLevelComplete, setShowLevelComplete] = useState(false);
@@ -47,7 +48,7 @@ function GameContent() {
       setLastScore(data.score ?? 0);
       setLastMovesLeft(data.moves ?? 0);
       setLastCoinsEarned(data.coinsEarned ?? 0);
-      setCoins(prev => prev + (data.coinsEarned ?? 0));
+      setCoins(addCoins(data.coinsEarned ?? 0));
       setShowLevelComplete(true);
     }
     if (data.outOfMoves) { setLastScore(data.score ?? 0); setShowPaywall(true); }
@@ -55,7 +56,7 @@ function GameContent() {
 
   const handleBuyMoves = (moveCount: number, coinCost: number) => {
     if (coins < coinCost) { setShowCoinShop(true); return; }
-    setCoins(prev => prev - coinCost);
+    setCoins(c => { spendCoins(coinCost); return c - coinCost; });
     setShowPaywall(false);
     sceneRef.current?.addMoves?.(moveCount);
   };
@@ -124,14 +125,16 @@ function GameContent() {
               if (coins < skipCost) { setShowCoinShop(true); return; }
               const fanPts = level * 120; // less than playing earns
               recordScore(selectedClub, 'crush_skip', fanPts);
-              setCoins(prev => prev - skipCost);
+              spendCoins(skipCost);
+              setCoins(getCoins());
               setLevel(prev => { const next = prev + 1; saveLevel(selectedClub, next); return next; });
             }}
             onBoost={() => {
               // Boost: spend 250 coins → +800 fan pts directly
               if (coins < 250) { setShowCoinShop(true); return; }
               recordScore(selectedClub, 'boost', 800);
-              setCoins(prev => prev - 250);
+              spendCoins(250);
+              setCoins(getCoins());
             }}
             onBuyCoins={() => setShowCoinShop(true)}
           />
@@ -169,7 +172,7 @@ function GameContent() {
       </div>
       {showPaywall && <PaywallModal theme={theme} coins={coins} score={lastScore} onBuyMoves={handleBuyMoves} onEndLevel={handleEndLevel} onBuyCoins={() => { setShowPaywall(false); setShowCoinShop(true); }} />}
       {showLevelComplete && <LevelComplete theme={theme} score={lastScore} coinsEarned={lastCoinsEarned} level={level} movesLeft={lastMovesLeft} onNextLevel={handleNextLevel} />}
-      {showCoinShop && <CoinShopModal onClose={() => setShowCoinShop(false)} onBuy={(amount) => setCoins(prev => prev + amount)} />}
+      {showCoinShop && <CoinShopModal onClose={() => setShowCoinShop(false)} clientId={selectedClub} returnPath={`/game?client=${selectedClub}`} />}
     </div>
   );
 }
