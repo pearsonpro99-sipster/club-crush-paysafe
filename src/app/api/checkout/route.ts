@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export const COIN_PACKS: Record<string, { coins: number; amount: number; label: string }> = {
+const COIN_PACKS: Record<string, { coins: number; amount: number; label: string }> = {
   starter: { coins: 500,  amount: 99,  label: 'Starter Pack'  },
   fan:     { coins: 1500, amount: 249, label: 'Fan Pack'       },
   season:  { coins: 5000, amount: 499, label: 'Season Pass'   },
