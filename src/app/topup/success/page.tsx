@@ -7,18 +7,18 @@ import { addCoins, getCoins } from '@/lib/coins';
 function SuccessContent() {
   const searchParams = useSearchParams();
   const router       = useRouter();
-  const sessionId    = searchParams.get('session_id') ?? '';
-  const clientId     = searchParams.get('client')     ?? '';
+  const merchantRef  = searchParams.get('merchant_ref') ?? '';
+  const clientId     = searchParams.get('client')       ?? '';
 
-  const [status, setStatus]           = useState<'loading' | 'success' | 'error'>('loading');
-  const [coinsAdded, setCoinsAdded]   = useState(0);
-  const [totalCoins, setTotalCoins]   = useState(0);
+  const [status, setStatus]         = useState<'loading' | 'success' | 'error'>('loading');
+  const [coinsAdded, setCoinsAdded] = useState(0);
+  const [totalCoins, setTotalCoins] = useState(0);
 
   useEffect(() => {
-    if (!sessionId) { setStatus('error'); return; }
+    if (!merchantRef) { setStatus('error'); return; }
 
     // Idempotency guard — prevents double-crediting on back/refresh
-    const idempotencyKey = `stripe_done_${sessionId}`;
+    const idempotencyKey = `paysafe_done_${merchantRef}`;
     if (localStorage.getItem(idempotencyKey)) {
       setCoinsAdded(0);
       setTotalCoins(getCoins());
@@ -26,7 +26,7 @@ function SuccessContent() {
       return;
     }
 
-    fetch(`/api/checkout/verify?session_id=${sessionId}`)
+    fetch(`/api/checkout/verify?merchant_ref=${encodeURIComponent(merchantRef)}`)
       .then(r => r.json())
       .then((data: { paid?: boolean; coins?: number; error?: string }) => {
         if (!data.paid) { setStatus('error'); return; }
@@ -37,7 +37,7 @@ function SuccessContent() {
         setStatus('success');
       })
       .catch(() => setStatus('error'));
-  }, [sessionId]);
+  }, [merchantRef]);
 
   const backPath = clientId ? `/client/${clientId}` : '/';
 
@@ -56,7 +56,7 @@ function SuccessContent() {
         <div style={{ fontSize: 48 }}>❌</div>
         <h2 style={{ color: '#fff', fontWeight: 900, fontSize: 20, margin: 0, textAlign: 'center' }}>Payment not confirmed</h2>
         <p style={{ color: '#ffffff66', fontSize: 14, textAlign: 'center', maxWidth: 300, margin: 0, lineHeight: 1.5 }}>
-          Your payment may still be processing. Check your email for a receipt from Stripe, or try again.
+          Your payment may still be processing. Check your email for a receipt, or try again.
         </p>
         <button
           onClick={() => router.push(backPath)}
@@ -93,7 +93,7 @@ function SuccessContent() {
             Back to Fan Games ›
           </button>
 
-          <p style={{ color: '#ffffff20', fontSize: 10, marginTop: 14 }}>A receipt has been sent to your email by Stripe</p>
+          <p style={{ color: '#ffffff20', fontSize: 10, marginTop: 14 }}>A receipt has been sent to your email</p>
         </div>
       </div>
     </div>
