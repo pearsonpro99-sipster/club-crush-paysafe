@@ -1,19 +1,17 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getStreak } from '@/lib/streak';
+import { getFanScore } from '@/lib/fanScore';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasRunner?: boolean; hasVillaFlap?: boolean; hasTransferDash?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
+  emoji: string; tagline: string; hasVillaFlap?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
 }> = {
-  arsenal:        { name: 'Arsenal FC',          primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners',                  hasRunner: true },
-  aston_villa:    { name: 'Aston Villa',          primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',              hasVillaFlap: true },
-  liverpool:      { name: 'Liverpool FC',          primary: '#C8102E', secondary: '#F6EB61', bg: '#1a0a0a', emoji: '🔴', tagline: "You'll Never Walk Alone" },
-  sky_sports:     { name: 'Sky Sports',            primary: '#0072CE', secondary: '#E8003D', bg: '#000d1a', emoji: '🔵', tagline: 'Where The Action Is',           hasTransferDash: true },
-  pdc:            { name: 'PDC Darts',             primary: '#00A651', secondary: '#FFD700', bg: '#0a1a0a', emoji: '🎯', tagline: 'The Premier League of Darts' },
-  psa_world_tour: { name: 'PSA World Tour',        primary: '#002D74', secondary: '#FF6B35', bg: '#000a1a', emoji: '🎾', tagline: 'World Squash Championship' },
-  volley_verse:   { name: 'Volley Verse',          primary: '#0057A8', secondary: '#FFD700', bg: '#000d1a', emoji: '🏐', tagline: 'Volleyball World' },
-  tiny_moves:     { name: 'Tiny Moves Run Club',   primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts',             hasTinyMovesFlap: true, hasTinyMovesSurge: true },
+  arsenal:     { name: 'Arsenal FC',         primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners' },
+  aston_villa: { name: 'Aston Villa',         primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',  hasVillaFlap: true },
+  tiny_moves:  { name: 'Tiny Moves Run Club', primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts', hasTinyMovesFlap: true, hasTinyMovesSurge: true },
 };
 
 export default function ClientHubPage() {
@@ -22,16 +20,22 @@ export default function ClientHubPage() {
   const clientId = params.clientId as string;
   const client = CLIENT_DATA[clientId] || { name: clientId, primary: '#666', secondary: '#fff', bg: '#111', emoji: '🎮', tagline: '' };
 
+  const [streak, setStreak]     = useState(0);
+  const [fanScore, setFanScore] = useState(0);
+
+  useEffect(() => {
+    setStreak(getStreak());
+    setFanScore(getFanScore(clientId));
+  }, [clientId]);
+
   return (
     <div style={{ minHeight: '100vh', background: client.bg, fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
 
-      {/* Header - mirrors web app */}
+      {/* Header */}
       <div style={{
-        background: client.primary,
-        padding: '12px 16px',
+        background: client.primary, padding: '12px 16px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        {/* Wallet - top left */}
         <button style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)',
@@ -41,22 +45,19 @@ export default function ClientHubPage() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 12V22H4a2 2 0 0 1-2-2V6a2 2 0 0 0 2 2h16v4z"/><path d="M22 12H18a2 2 0 0 0 0 4h4"/>
           </svg>
-          <span>200</span>
+          <span>🪙 200</span>
         </button>
 
-        {/* Club name */}
         <div style={{ color: '#fff', fontWeight: 900, fontSize: 15, letterSpacing: 0.5 }}>
           {client.emoji} {client.name}
         </div>
 
-        {/* Account - top right */}
-        <button style={{
+        <button onClick={() => router.push('/leaderboard')} style={{
           background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)',
           borderRadius: 20, padding: '6px 10px', cursor: 'pointer',
+          color: '#FFD700', fontSize: 12, fontWeight: 700,
         }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
+          🏆
         </button>
       </div>
 
@@ -66,7 +67,7 @@ export default function ClientHubPage() {
           background: 'transparent', border: 'none', color: '#ffffff50',
           fontSize: 13, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 4,
         }}>
-          ← All Clients
+          ← All Clubs
         </button>
       </div>
 
@@ -74,7 +75,27 @@ export default function ClientHubPage() {
       <div style={{ padding: '20px 16px 8px', textAlign: 'center' }}>
         <div style={{ fontSize: 52, marginBottom: 8 }}>{client.emoji}</div>
         <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 900, margin: '0 0 4px' }}>{client.name}</h1>
-        <p style={{ color: '#ffffff50', fontSize: 12, margin: 0 }}>{client.tagline}</p>
+        <p style={{ color: '#ffffff50', fontSize: 12, margin: '0 0 10px' }}>{client.tagline}</p>
+
+        {/* Streak + fan score pills */}
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {streak > 0 && (
+            <div style={{
+              background: 'rgba(255,140,0,0.15)', border: '1px solid rgba(255,140,0,0.4)',
+              borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700, color: '#FF8C00',
+            }}>
+              🔥 {streak} day streak
+            </div>
+          )}
+          {fanScore > 0 && (
+            <div style={{
+              background: `${client.primary}22`, border: `1px solid ${client.primary}44`,
+              borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700, color: client.primary,
+            }}>
+              ⭐ {fanScore.toLocaleString()} fan pts
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Games */}
@@ -83,31 +104,17 @@ export default function ClientHubPage() {
           Fan Games
         </p>
 
-        {/* Club Crush - always available */}
+        {/* Club Crush - always */}
         <GameCard
           title="Club Crush"
-          description="Match-3 puzzle game. Earn coins, beat levels, climb the table."
+          description="Match-3 puzzle game. Earn fan points, beat levels, climb the leaderboard."
           emoji="💎"
           label="MATCH-3"
           primary={client.primary}
           onClick={() => router.push(`/game?client=${clientId}`)}
         />
 
-        {/* Arsenal Runner - Arsenal only */}
-        {client.hasRunner && (
-          <GameCard
-            title="Chase the Team Bus 🚌"
-            description="Don't be late for the match! Dodge obstacles, collect coins, and catch the team bus."
-            emoji="🏆"
-            label="RUNNER"
-            primary={client.primary}
-            accent={client.secondary}
-            badge="ARSENAL EXCLUSIVE"
-            onClick={() => router.push('/runner')}
-          />
-        )}
-
-        {/* Villa Flap - Aston Villa only */}
+        {/* McGinn's Goggle Dash - Aston Villa only */}
         {client.hasVillaFlap && (
           <GameCard
             title="McGinn's Goggle Dash"
@@ -121,21 +128,7 @@ export default function ClientHubPage() {
           />
         )}
 
-        {/* Transfer Deadline Dash - Sky Sports only */}
-        {client.hasTransferDash && (
-          <GameCard
-            title="Transfer Deadline Dash"
-            description="Timed connections puzzle — group the transfers before the window slams shut!"
-            emoji="⏱️"
-            label="PUZZLE"
-            primary={client.primary}
-            accent={client.secondary}
-            badge="SKY SPORTS EXCLUSIVE"
-            onClick={() => router.push('/transfer-dash')}
-          />
-        )}
-
-        {/* Tiny Moves Dash - Tiny Moves Run Club only */}
+        {/* Tiny Moves Dash - Tiny Moves only */}
         {client.hasTinyMovesFlap && (
           <GameCard
             title="Tiny Moves Run Club Dash"
@@ -149,11 +142,11 @@ export default function ClientHubPage() {
           />
         )}
 
-        {/* 5K Surge - Tiny Moves Run Club only */}
+        {/* 5K Surge - Tiny Moves only */}
         {client.hasTinyMovesSurge && (
           <GameCard
             title="5K Surge"
-            description="React fast when the sprint signal fires! Tap in time to surge ahead. Miss too many and your race is over."
+            description="React fast when the sprint signal fires! Tap in time to surge ahead."
             emoji="⚡"
             label="REACTION"
             primary={client.primary}
@@ -163,14 +156,21 @@ export default function ClientHubPage() {
           />
         )}
 
-        {/* Coming soon for others */}
-        <div style={{
-          background: '#ffffff05', border: '1px dashed #ffffff15',
-          borderRadius: 16, padding: '16px', marginTop: 8, textAlign: 'center',
-        }}>
-          <p style={{ color: '#ffffff25', fontSize: 12, margin: 0 }}>
-            ✦ More games coming soon for {client.name}
-          </p>
+        {/* Leaderboard CTA */}
+        <div
+          onClick={() => router.push('/leaderboard')}
+          style={{
+            background: `${client.primary}12`, border: `1px solid ${client.primary}30`,
+            borderRadius: 16, padding: '14px 16px', marginTop: 8,
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            cursor: 'pointer',
+          }}
+        >
+          <div>
+            <p style={{ color: '#fff', fontWeight: 800, fontSize: 14, margin: 0 }}>🏆 Fan Leaderboard</p>
+            <p style={{ color: '#ffffff44', fontSize: 11, margin: '2px 0 0' }}>See your rank · Monthly prize draws</p>
+          </div>
+          <span style={{ color: '#ffffff30', fontSize: 22 }}>›</span>
         </div>
       </div>
     </div>

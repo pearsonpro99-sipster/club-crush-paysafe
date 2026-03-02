@@ -5,6 +5,9 @@ import dynamic from 'next/dynamic';
 import { THEMES, ClubTheme } from '@/lib/game/themes';
 import PaywallModal from './PaywallModal';
 import LevelComplete from './LevelComplete';
+import CoinShopModal from './CoinShopModal';
+import { recordScore } from '@/lib/fanScore';
+import { touchStreak } from '@/lib/streak';
 
 const PhaserGame = dynamic(() => import('./PhaserGame'), { ssr: false });
 
@@ -23,12 +26,14 @@ function GameContent() {
   const clientParam = searchParams.get('client') || 'arsenal';
   const [selectedClub] = useState<string>(THEMES[clientParam] ? clientParam : 'arsenal');
   const [gameStarted, setGameStarted] = useState(false);
-  const [coins, setCoins] = useState(200);
+  const [coins, setCoins] = useState(150);
   const [level, setLevel] = useState(1);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showLevelComplete, setShowLevelComplete] = useState(false);
+  const [showCoinShop, setShowCoinShop] = useState(false);
   const [lastScore, setLastScore] = useState(0);
   const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
+  const [lastMovesLeft, setLastMovesLeft] = useState(0);
   const [gameKey, setGameKey] = useState(0);
   const sceneRef = useRef<any>(null);
   const theme: ClubTheme = THEMES[selectedClub];
@@ -36,24 +41,47 @@ function GameContent() {
   // Load saved level for this club on mount
   useEffect(() => { setLevel(loadLevel(selectedClub)); }, [selectedClub]);
 
-  const handleGameEvent = useCallback((data: { score?: number; coinsEarned?: number; levelComplete?: boolean; outOfMoves?: boolean; }) => {
-    if (data.levelComplete) { setLastScore(data.score ?? 0); setLastCoinsEarned(data.coinsEarned ?? 0); setCoins(prev => prev + (data.coinsEarned ?? 0)); setShowLevelComplete(true); }
+  const handleGameEvent = useCallback((data: { score?: number; moves?: number; coinsEarned?: number; levelComplete?: boolean; outOfMoves?: boolean; }) => {
+    if (data.levelComplete) {
+      recordScore(selectedClub, 'crush', data.score ?? 0);
+      setLastScore(data.score ?? 0);
+      setLastMovesLeft(data.moves ?? 0);
+      setLastCoinsEarned(data.coinsEarned ?? 0);
+      setCoins(prev => prev + (data.coinsEarned ?? 0));
+      setShowLevelComplete(true);
+    }
     if (data.outOfMoves) { setLastScore(data.score ?? 0); setShowPaywall(true); }
-  }, []);
+  }, [selectedClub]);
 
-  const handleBuyMoves = (moveCount: number, coinCost: number) => { if (coins < coinCost) return; setCoins(prev => prev - coinCost); setShowPaywall(false); sceneRef.current?.addMoves?.(moveCount); };
+  const handleBuyMoves = (moveCount: number, coinCost: number) => {
+    if (coins < coinCost) { setShowCoinShop(true); return; }
+    setCoins(prev => prev - coinCost);
+    setShowPaywall(false);
+    sceneRef.current?.addMoves?.(moveCount);
+  };
   const handleEndLevel = () => { setShowPaywall(false); setGameStarted(false); setGameKey(k => k + 1); };
   const handleNextLevel = () => {
     setShowLevelComplete(false);
     setLevel(prev => { const next = prev + 1; saveLevel(selectedClub, next); return next; });
     setGameKey(k => k + 1);
   };
+  const handleStartGame = () => { touchStreak(); setGameStarted(true); };
 
+  const lowCoins = coins < 60;
   const HeaderBar = () => (
     <div style={{ background: theme.primaryColour, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <button style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 20, padding: '6px 12px', color: '#FFD700', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V22H4a2 2 0 0 1-2-2V6a2 2 0 0 0 2 2h16v4z"/><path d="M22 12H18a2 2 0 0 0 0 4h4"/></svg>
+      <button
+        onClick={() => setShowCoinShop(true)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: lowCoins ? 'rgba(255,80,80,0.35)' : 'rgba(0,0,0,0.25)',
+          border: `1px solid ${lowCoins ? 'rgba(255,80,80,0.6)' : 'rgba(255,255,255,0.2)'}`,
+          borderRadius: 20, padding: '6px 12px',
+          color: '#FFD700', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+        }}
+      >
         <span>🪙 {coins}</span>
+        {lowCoins && <span style={{ color: '#ff8080', fontSize: 10, fontWeight: 800 }}>LOW ＋</span>}
       </button>
       <div style={{ color: '#fff', fontWeight: 900, fontSize: 14 }}>💎 Club Crush</div>
       <button onClick={() => { setGameStarted(false); router.push(`/client/${selectedClub}`); }} style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 20, padding: '6px 10px', cursor: 'pointer', color: '#ffffff80', fontSize: 12 }}>✕</button>
@@ -79,7 +107,7 @@ function GameContent() {
               <p style={{ color: '#FFD700', fontSize: 22, fontWeight: 900, margin: 0 }}>🪙 {coins}</p>
             </div>
           </div>
-          <button onClick={() => setGameStarted(true)} style={{ width: '100%', maxWidth: 360, padding: '18px', borderRadius: 20, background: theme.primaryColour, border: `2px solid ${theme.accentColour}`, color: '#fff', fontSize: 18, fontWeight: 900, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+          <button onClick={handleStartGame} style={{ width: '100%', maxWidth: 360, padding: '18px', borderRadius: 20, background: theme.primaryColour, border: `2px solid ${theme.accentColour}`, color: '#fff', fontSize: 18, fontWeight: 900, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
             Play {theme.levelLabel} {level}
           </button>
 
@@ -93,23 +121,6 @@ function GameContent() {
                   <div>
                     <p style={{ color: '#95BFE5', fontWeight: 900, fontSize: 16, margin: 0 }}>McGinn's Goggle Dash</p>
                     <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>Aston Villa Flappy Bird</p>
-                  </div>
-                  <span style={{ color: '#ffffff44', marginLeft: 'auto', fontSize: 20 }}>▶</span>
-                </div>
-              </a>
-            </div>
-          )}
-
-          {/* Transfer Deadline Dash — Sky Sports only */}
-          {selectedClub === 'sky_sports' && (
-            <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
-              <p style={{ color: '#ffffff40', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 10 }}>Also Available</p>
-              <a href="/transfer-dash" style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'linear-gradient(135deg, #0072CE 0%, #001f4d 100%)', borderRadius: 16, padding: '16px', border: '2px solid #E8003D', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <span style={{ fontSize: 40 }}>⏱️</span>
-                  <div>
-                    <p style={{ color: '#ffffff', fontWeight: 900, fontSize: 16, margin: 0 }}>Transfer Deadline Dash</p>
-                    <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>Timed connections puzzle · Daily reset</p>
                   </div>
                   <span style={{ color: '#ffffff44', marginLeft: 'auto', fontSize: 20 }}>▶</span>
                 </div>
@@ -134,22 +145,6 @@ function GameContent() {
             </div>
           )}
 
-          {/* Runner game link — Arsenal only */}
-          {selectedClub === 'arsenal' && (
-            <div style={{ width: '100%', maxWidth: 360, marginTop: 24 }}>
-              <p style={{ color: '#ffffff40', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 10 }}>Also Available</p>
-              <a href="/runner" style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'linear-gradient(135deg, #DB0007 0%, #8B0000 100%)', borderRadius: 16, padding: '16px', border: '2px solid #FFD700', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <span style={{ fontSize: 40 }}>🏆</span>
-                  <div>
-                    <p style={{ color: '#FFD700', fontWeight: 900, fontSize: 16, margin: 0 }}>Chase the Team Bus 🚌</p>
-                    <p style={{ color: '#ffffff88', fontSize: 12, margin: '2px 0 0' }}>Don't be late for the match!</p>
-                  </div>
-                  <span style={{ color: '#ffffff44', marginLeft: 'auto', fontSize: 20 }}>▶</span>
-                </div>
-              </a>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -162,10 +157,11 @@ function GameContent() {
         <p style={{ color: '#ffffff40', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, margin: 0 }}>{theme.seasonLabel} · {theme.levelLabel} {level} of {theme.totalLevels}</p>
       </div>
       <div style={{ padding: '0 8px' }}>
-        <PhaserGame key={gameKey} theme={theme} onGameEvent={handleGameEvent} gameRef={sceneRef} />
+        <PhaserGame key={gameKey} theme={theme} level={level} onGameEvent={handleGameEvent} gameRef={sceneRef} />
       </div>
-      {showPaywall && <PaywallModal theme={theme} coins={coins} score={lastScore} onBuyMoves={handleBuyMoves} onEndLevel={handleEndLevel} />}
-      {showLevelComplete && <LevelComplete theme={theme} score={lastScore} coinsEarned={lastCoinsEarned} level={level} onNextLevel={handleNextLevel} />}
+      {showPaywall && <PaywallModal theme={theme} coins={coins} score={lastScore} onBuyMoves={handleBuyMoves} onEndLevel={handleEndLevel} onBuyCoins={() => { setShowPaywall(false); setShowCoinShop(true); }} />}
+      {showLevelComplete && <LevelComplete theme={theme} score={lastScore} coinsEarned={lastCoinsEarned} level={level} movesLeft={lastMovesLeft} onNextLevel={handleNextLevel} />}
+      {showCoinShop && <CoinShopModal onClose={() => setShowCoinShop(false)} onBuy={(amount) => setCoins(prev => prev + amount)} />}
     </div>
   );
 }

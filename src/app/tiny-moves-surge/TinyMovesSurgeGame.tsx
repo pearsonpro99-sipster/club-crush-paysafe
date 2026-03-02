@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { recordScore } from '@/lib/fanScore';
+import { touchStreak } from '@/lib/streak';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const TOTAL_DISTANCE   = 5000;  // metres (display)
@@ -53,10 +55,11 @@ export default function TinyMovesSurgeGame() {
   const tapRef   = useRef<(() => void) | null>(null);
   const phaseRef = useRef<Phase>('splash');
 
-  // Load persisted best
+  // Load persisted best + touch streak on mount
   useEffect(() => {
     const s = localStorage.getItem('tm_surge_best');
     if (s) setBestDist(parseInt(s));
+    touchStreak();
   }, []);
 
   // ─── GAME LOOP ─────────────────────────────────────────────────────────────
@@ -92,7 +95,9 @@ export default function TinyMovesSurgeGame() {
       clearInterval(tick);
       clearTimeout(sprintTimer);
       clearTimeout(missTimer);
-      const best = Math.max(Math.round(dist), parseInt(localStorage.getItem('tm_surge_best') || '0'));
+      const finalDist = Math.round(dist);
+      recordScore('tiny_moves', 'surge', finalDist);
+      const best = Math.max(finalDist, parseInt(localStorage.getItem('tm_surge_best') || '0'));
       localStorage.setItem('tm_surge_best', best.toString());
       if (mounted) {
         setBestDist(best);

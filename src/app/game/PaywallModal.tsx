@@ -8,15 +8,16 @@ interface PaywallModalProps {
   score: number;
   onBuyMoves: (moveCost: number, coinCost: number) => void;
   onEndLevel: () => void;
+  onBuyCoins: () => void;
 }
 
 const MOVE_PACKS = [
-  { moves: 5,  coins: 50,  label: 'Quick Boost' },
-  { moves: 10, coins: 90,  label: 'Power Pack',  badge: 'BEST VALUE' },
-  { moves: 15, coins: 120, label: 'Full Tank' },
+  { moves: 5,  coins: 70,  label: 'Quick Boost' },
+  { moves: 10, coins: 120, label: 'Power Pack',  badge: 'BEST VALUE' },
+  { moves: 15, coins: 170, label: 'Full Tank' },
 ];
 
-export default function PaywallModal({ theme, coins, score, onBuyMoves, onEndLevel }: PaywallModalProps) {
+export default function PaywallModal({ theme, coins, score, onBuyMoves, onEndLevel, onBuyCoins }: PaywallModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
       <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
@@ -25,8 +26,8 @@ export default function PaywallModal({ theme, coins, score, onBuyMoves, onEndLev
         {/* Header */}
         <div className="p-5 text-center" style={{ background: theme.primaryColour }}>
           <div className="text-4xl mb-1">😬</div>
-          <h2 className="text-white text-xl font-black uppercase tracking-wide">So Close!</h2>
-          <p className="text-white/80 text-sm mt-1">You're just a few moves away from completing this match</p>
+          <h2 className="text-white text-xl font-black uppercase tracking-wide">Out of Moves!</h2>
+          <p className="text-white/80 text-sm mt-1">So close — buy moves to finish this {theme.levelLabel.toLowerCase()}!</p>
         </div>
 
         {/* Score */}
@@ -35,10 +36,19 @@ export default function PaywallModal({ theme, coins, score, onBuyMoves, onEndLev
           <p className="text-white text-3xl font-black">{score.toLocaleString()}</p>
         </div>
 
-        {/* Coin balance */}
-        <div className="px-5 py-3 flex items-center justify-center gap-2">
-          <span className="text-2xl">🪙</span>
-          <span className="text-white font-bold text-lg">{coins} coins</span>
+        {/* Coin balance + top up */}
+        <div className="px-5 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🪙</span>
+            <span className="text-white font-bold text-lg">{coins} coins</span>
+          </div>
+          <button
+            onClick={onBuyCoins}
+            className="text-xs font-black px-3 py-1.5 rounded-full"
+            style={{ background: theme.accentColour, color: '#000' }}
+          >
+            ＋ Top Up
+          </button>
         </div>
 
         {/* Move packs */}
@@ -75,24 +85,13 @@ export default function PaywallModal({ theme, coins, score, onBuyMoves, onEndLev
           })}
         </div>
 
-        {/* Buy coins CTA */}
-        <div className="px-4 pb-3">
-          <button
-            className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-wider"
-            style={{ background: theme.accentColour, color: '#000' }}
-            onClick={() => alert('Stripe coin purchase coming tomorrow — connect Stripe here')}
-          >
-            💳 Buy More Coins
-          </button>
-        </div>
-
         {/* Quit */}
         <div className="px-4 pb-5">
           <button
             onClick={onEndLevel}
             className="w-full py-2 text-white/40 text-sm hover:text-white/70 transition-colors"
           >
-            End this match →
+            Give up this {theme.levelLabel.toLowerCase()} →
           </button>
         </div>
       </div>

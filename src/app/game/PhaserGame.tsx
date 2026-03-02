@@ -5,6 +5,7 @@ import { ClubTheme } from '@/lib/game/themes';
 
 interface PhaserGameProps {
   theme: ClubTheme;
+  level: number;
   onGameEvent: (data: {
     score?: number;
     moves?: number;
@@ -15,7 +16,7 @@ interface PhaserGameProps {
   gameRef: React.MutableRefObject<any>;
 }
 
-export default function PhaserGame({ theme, onGameEvent, gameRef }: PhaserGameProps) {
+export default function PhaserGame({ theme, level, onGameEvent, gameRef }: PhaserGameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const phaserRef = useRef<any>(null);
 
@@ -35,7 +36,7 @@ export default function PhaserGame({ theme, onGameEvent, gameRef }: PhaserGamePr
       // Set container height explicitly so page doesn't jump
       containerRef.current!.style.height = `${height}px`;
 
-      (window as any).__clubCrushData = { theme, onGameEvent };
+      (window as any).__clubCrushData = { theme, onGameEvent, level };
 
       const scene = new ClubCrushScene();
 

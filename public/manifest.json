@@ -1,0 +1,16 @@
+{
+  "name": "Dizplai Fan Games",
+  "short_name": "Fan Games",
+  "description": "Sports fan games — Club Crush, Flappy Bird & more. Earn points, climb the leaderboard, win prizes.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0a0a0f",
+  "background_color": "#0a0a0f",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["games", "sports", "entertainment"],
+  "screenshots": []
+}

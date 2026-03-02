@@ -4,8 +4,16 @@ import { ClubTheme } from '@/lib/game/themes';
 const COLS = 7;
 const ROWS = 9;
 const TILE_TYPES = 5;
-const STARTING_MOVES = 20;
-const TARGET_SCORE = 1500;
+
+function levelConfig(level: number): { targetScore: number; startingMoves: number } {
+  // Tier increases every 5 levels (max tier 5)
+  const tier    = Math.min(Math.floor((level - 1) / 5), 5);
+  const targets = [1500, 2000, 2600, 3300, 4200, 5200];
+  const movesArr = [22,   20,   18,   16,   15,   14];
+  // Within each tier, add +80 per level
+  const target  = targets[tier] + ((level - 1) % 5) * 80;
+  return { targetScore: target, startingMoves: movesArr[tier] };
+}
 
 interface Tile {
   type: number;
@@ -30,7 +38,10 @@ export class ClubCrushScene extends Phaser.Scene {
   private offsetY: number = 85;
   private selectedTile: Tile | null = null;
   private score: number = 0;
-  private moves: number = STARTING_MOVES;
+  private moves: number = 22;
+  private targetScore: number = 1500;
+  private startingMoves: number = 22;
+  private currentLevel: number = 1;
   private isProcessing: boolean = false;
   private theme!: ClubTheme;
   private onGameEvent!: GameEventCallback;
@@ -45,8 +56,12 @@ export class ClubCrushScene extends Phaser.Scene {
     const data = (typeof window !== 'undefined' && (window as any).__clubCrushData) || _data || {};
     this.theme = data.theme;
     this.onGameEvent = data.onGameEvent || (() => { });
+    this.currentLevel = data.level || 1;
+    const cfg = levelConfig(this.currentLevel);
+    this.targetScore   = cfg.targetScore;
+    this.startingMoves = cfg.startingMoves;
     this.score = 0;
-    this.moves = STARTING_MOVES;
+    this.moves = this.startingMoves;
     this.grid = [];
     this.selectedTile = null;
     this.isProcessing = false;
@@ -77,7 +92,7 @@ export class ClubCrushScene extends Phaser.Scene {
       align: 'center', lineSpacing: 2,
     }).setOrigin(0.5, 0);
 
-    this.add.text(width - 12, 10, `TARGET\n${TARGET_SCORE}`, {
+    this.add.text(width - 12, 10, `TARGET\n${this.targetScore.toLocaleString()}`, {
       fontSize: '13px', color: '#fff', fontStyle: 'bold',
       align: 'right', lineSpacing: 2,
     }).setOrigin(1, 0);
@@ -372,8 +387,8 @@ export class ClubCrushScene extends Phaser.Scene {
   }
 
   private checkState() {
-    if (this.score >= TARGET_SCORE) {
-      const coins = 100 + Math.max(0, this.moves * 10);
+    if (this.score >= this.targetScore) {
+      const coins = 50 + this.currentLevel * 5 + Math.max(0, this.moves * 8);
       this.onGameEvent({ score: this.score, levelComplete: true, coinsEarned: coins, moves: this.moves });
     } else if (this.moves <= 0) {
       this.onGameEvent({ score: this.score, outOfMoves: true, moves: 0 });

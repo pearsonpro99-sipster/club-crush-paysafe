@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { FlapperEvent } from '@/lib/game/AstionVillaFlapperScene';
+import { recordScore } from '@/lib/fanScore';
+import { touchStreak } from '@/lib/streak';
 
 const VillaFlapperGame = dynamic(() => import('./VillaFlapperGame'), { ssr: false });
 
@@ -14,9 +16,12 @@ export default function VillaRunnerPage() {
   const [gameKey, setGameKey] = useState(0);
   const sceneRef = useRef<any>(null);
 
+  useEffect(() => { touchStreak(); }, []);
+
   const handleEvent = useCallback((e: FlapperEvent) => {
     if (e.type === 'score') setLiveScore(e.score);
     if (e.type === 'died') {
+      recordScore('aston_villa', 'flapper', e.score);
       setFinalScore(e.score);
       setBestScore(prev => Math.max(prev, e.score));
       setPhase('dead');
@@ -90,7 +95,7 @@ export default function VillaRunnerPage() {
           </button>
 
           <button
-            onClick={() => window.location.href = '/game'}
+            onClick={() => window.location.href = '/client/aston_villa'}
             style={{
               background: 'transparent', color: '#ffffff44',
               border: '1px solid #ffffff15', borderRadius: 14,
@@ -98,7 +103,7 @@ export default function VillaRunnerPage() {
               cursor: 'pointer', width: '100%', maxWidth: 320,
             }}
           >
-            ← Back to Club Crush
+            ← Back to Villa Hub
           </button>
         </div>
       )}

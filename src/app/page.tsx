@@ -1,15 +1,12 @@
 'use client';
 import { useRouter } from 'next/navigation';
+
 const CLIENTS = [
-  { id: 'arsenal',       name: 'Arsenal FC',      emoji: '🔴', primary: '#EF0107', games: 2 },
-  { id: 'aston_villa',   name: 'Aston Villa',     emoji: '🟣', primary: '#670E36', games: 2 },
-  { id: 'liverpool',     name: 'Liverpool FC',    emoji: '🔴', primary: '#C8102E', games: 1 },
-  { id: 'sky_sports',    name: 'Sky Sports',      emoji: '🔵', primary: '#0072CE', games: 2 },
-  { id: 'pdc',           name: 'PDC Darts',       emoji: '🎯', primary: '#00A651', games: 1 },
-  { id: 'psa_world_tour',name: 'PSA World Tour',  emoji: '🎾', primary: '#002D74', games: 1 },
-  { id: 'volley_verse',  name: 'Volley Verse',    emoji: '🏐', primary: '#0057A8', games: 1 },
-  { id: 'tiny_moves',   name: 'Tiny Moves RC',   emoji: '🏃', primary: '#4FC3F7', games: 3 },
+  { id: 'arsenal',     name: 'Arsenal FC',    emoji: '🔴', primary: '#EF0107', games: 1 },
+  { id: 'aston_villa', name: 'Aston Villa',   emoji: '🟣', primary: '#670E36', games: 2 },
+  { id: 'tiny_moves',  name: 'Tiny Moves RC', emoji: '🏃', primary: '#4FC3F7', games: 3 },
 ];
+
 export default function HomePage() {
   const router = useRouter();
   return (
@@ -20,14 +17,14 @@ export default function HomePage() {
           <span>200</span>
         </button>
         <div style={{ color: '#fff', fontWeight: 900, fontSize: 16, letterSpacing: 1 }}>DIZPLAI<span style={{ color: '#EF0107' }}>.</span></div>
-        <button style={{ background: '#ffffff10', border: '1px solid #ffffff15', borderRadius: 20, padding: '6px 10px', cursor: 'pointer' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff60" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <button onClick={() => router.push('/leaderboard')} style={{ background: '#ffffff10', border: '1px solid #ffffff15', borderRadius: 20, padding: '6px 12px', cursor: 'pointer', color: '#FFD700', fontSize: 12, fontWeight: 700 }}>
+          🏆 Board
         </button>
       </div>
       <div style={{ padding: '24px 16px 16px', textAlign: 'center' }}>
         <p style={{ color: '#ffffff40', fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', margin: '0 0 6px' }}>Second Screen · Fan Games</p>
         <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 900, margin: '0 0 6px', letterSpacing: -0.5 }}>Select Your Club</h1>
-        <p style={{ color: '#ffffff40', fontSize: 12, margin: 0 }}>Interactive games for every client</p>
+        <p style={{ color: '#ffffff40', fontSize: 12, margin: 0 }}>Earn points. Climb the leaderboard. Win prizes.</p>
       </div>
       <div style={{ padding: '8px 12px 32px' }}>
         {CLIENTS.map(client => (

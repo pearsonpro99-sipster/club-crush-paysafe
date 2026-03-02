@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { FlapperEvent } from '@/lib/game/TinyMovesFlapperScene';
+import { recordScore } from '@/lib/fanScore';
+import { touchStreak } from '@/lib/streak';
 
 const TinyMovesGame = dynamic(() => import('./TinyMovesGame'), { ssr: false });
 
@@ -14,9 +16,12 @@ export default function TinyMovesPage() {
   const [gameKey, setGameKey] = useState(0);
   const sceneRef = useRef<any>(null);
 
+  useEffect(() => { touchStreak(); }, []);
+
   const handleEvent = useCallback((e: FlapperEvent) => {
     if (e.type === 'score') setLiveScore(e.score);
     if (e.type === 'died') {
+      recordScore('tiny_moves', 'flapper', e.score);
       setFinalScore(e.score);
       setBestScore(prev => Math.max(prev, e.score));
       setPhase('dead');
