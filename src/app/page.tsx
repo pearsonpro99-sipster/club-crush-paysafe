@@ -5,7 +5,7 @@ import { MockUser, getUser } from '@/lib/auth';
 import AuthModal from '@/app/components/AuthModal';
 
 const CLIENTS = [
-  { id: 'arsenal',     name: 'Arsenal FC',    emoji: '🔴', primary: '#EF0107', games: 1 },
+  { id: 'arsenal',     name: 'Arsenal FC',    emoji: '🔴', primary: '#EF0107', games: 2 },
   { id: 'aston_villa', name: 'Aston Villa',   emoji: '🟣', primary: '#670E36', games: 2 },
   { id: 'tiny_moves',  name: 'Tiny Moves RC', emoji: '🏃', primary: '#4FC3F7', games: 3 },
 ];

@@ -9,9 +9,9 @@ import AuthModal from '@/app/components/AuthModal';
 
 const CLIENT_DATA: Record<string, {
   name: string; primary: string; secondary: string; bg: string;
-  emoji: string; tagline: string; hasVillaFlap?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
+  emoji: string; tagline: string; hasVillaFlap?: boolean; hasArsenalFlap?: boolean; hasTinyMovesFlap?: boolean; hasTinyMovesSurge?: boolean;
 }> = {
-  arsenal:     { name: 'Arsenal FC',         primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners' },
+  arsenal:     { name: 'Arsenal FC',         primary: '#EF0107', secondary: '#FFD700', bg: '#1a0505', emoji: '🔴', tagline: 'The Gunners', hasArsenalFlap: true },
   aston_villa: { name: 'Aston Villa',         primary: '#670E36', secondary: '#95BFE5', bg: '#1a0512', emoji: '🟣', tagline: 'Villa Till I Die',  hasVillaFlap: true },
   tiny_moves:  { name: 'Tiny Moves Run Club', primary: '#4FC3F7', secondary: '#0288D1', bg: '#060e18', emoji: '🏃', tagline: 'Every Run Counts', hasTinyMovesFlap: true, hasTinyMovesSurge: true },
 };
@@ -134,6 +134,20 @@ export default function ClientHubPage() {
           primary={client.primary}
           onClick={() => router.push(`/game?client=${clientId}`)}
         />
+
+        {/* Gunners Flap - Arsenal only */}
+        {client.hasArsenalFlap && (
+          <GameCard
+            title="Gunners Flap"
+            description="Pick your character — Gunnersaurus, Saka, Ødegaard or Henry — and fly through Emirates!"
+            emoji="🦖"
+            label="FLAPPY"
+            primary={client.primary}
+            accent={client.secondary}
+            badge="ARSENAL EXCLUSIVE"
+            onClick={() => router.push('/arsenal-flapper')}
+          />
+        )}
 
         {/* McGinn's Goggle Dash - Aston Villa only */}
         {client.hasVillaFlap && (
